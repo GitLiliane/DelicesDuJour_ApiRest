@@ -1,0 +1,25 @@
+﻿using DelicesDuJour_ApiRest.Domain.DTO.Out;
+using FluentValidation;
+
+namespace DelicesDuJour_ApiRest.Domain.DTO.In
+{
+    public class CreateEtapeDTO
+    {
+        public TupleDTO<int, int> Key { get; set; }
+        public string titre { get; set; }
+        public string texte { get; set; }
+    }
+
+    public class CreateEtapeDTOValidator : AbstractValidator<CreateEtapeDTO>
+    {
+        public CreateEtapeDTOValidator()
+        {
+            // Arrêter la validation dès qu'une règle échoue
+            //RuleLevelCascadeMode = CascadeMode.Stop;
+            //ClassLevelCascadeMode = CascadeMode.Stop;
+
+            RuleFor(e => e.titre).NotNull().NotEmpty().WithMessage("Le titre est obligatoire.");
+          
+        }
+    }
+}
