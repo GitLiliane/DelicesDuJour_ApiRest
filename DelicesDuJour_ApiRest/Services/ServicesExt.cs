@@ -7,6 +7,7 @@ namespace DelicesDuJour_ApiRest.Services
         public static void AddBll(this IServiceCollection services)
         {
             services.AddTransient<IBiblioService, BiblioService>();
+            services.AddTransient<IJwtTokenService, JwtTokenService>();
         }
     }
 }

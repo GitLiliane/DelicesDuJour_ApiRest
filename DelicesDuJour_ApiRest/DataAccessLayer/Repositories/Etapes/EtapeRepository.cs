@@ -1,12 +1,11 @@
 ﻿using Dapper;
-using DelicesDuJour_ApiRest.DataAccessLayer.Repositories.Etapes;
 using DelicesDuJour_ApiRest.DataAccessLayer.Session;
 using DelicesDuJour_ApiRest.Domain;
 using DelicesDuJour_ApiRest.Domain.BO;
 using MySqlX.XDevAPI.Common;
 using static Mysqlx.Expect.Open.Types.Condition.Types;
 
-namespace DelicesDuJour_ApiRest.DataAccessLayer.Repositories.Recettes
+namespace DelicesDuJour_ApiRest.DataAccessLayer.Repositories.Etapes
 {
     public class EtapeRepository : IEtapeRepository
     {
@@ -23,7 +22,7 @@ namespace DelicesDuJour_ApiRest.DataAccessLayer.Repositories.Recettes
             // Étape 1 : Récupérer les données brutes de la base de données dans un tuple
             string query = $"SELECT * FROM {ETAPE_TABLE} ORDER BY id_recette ASC;";
 
-            var etapesData = await _dbSession.Connection.QueryAsync<(int id_recette, int numero, string titre, string texte)>(query);
+            var etapesData = await _dbSession.Connection.QueryAsync<(int id_recette, int numero, string titre, string texte)>(query, transaction: _dbSession.Transaction);
 
             // Étape 2 : Mapper manuellement les données du tuple vers votre classe Etape
             var etapes = etapesData.Select(e => new Etape
@@ -46,7 +45,7 @@ namespace DelicesDuJour_ApiRest.DataAccessLayer.Repositories.Recettes
             // Utilisez QueryFirstOrDefaultAsync pour éviter l'exception
             var result = await _dbSession.Connection.QueryFirstOrDefaultAsync<(int id_recette, int numero, string titre, string texte)>(
                 query,
-                new { id_recette = key.t, numero = key.v }
+                new { id_recette = key.t, numero = key.v }, transaction: _dbSession.Transaction
             );
 
             // Vérifiez si un résultat a été trouvé
@@ -74,11 +73,11 @@ namespace DelicesDuJour_ApiRest.DataAccessLayer.Repositories.Recettes
             {
                 id_recette = etape.Key.t,
                 numero = etape.Key.v,
-                titre = etape.titre,
-                texte = etape.texte
+                etape.titre,
+                etape.texte
             };
 
-            await _dbSession.Connection.ExecuteAsync(query, parameters);
+            await _dbSession.Connection.ExecuteAsync(query, parameters, transaction: _dbSession.Transaction);
 
             // Retournez simplement l'entité car sa clé est déjà renseignée
             return etape;
@@ -92,11 +91,11 @@ namespace DelicesDuJour_ApiRest.DataAccessLayer.Repositories.Recettes
             {
                 id_recette = etape.Key.t,
                 numero = etape.Key.v,
-                titre = etape.titre,
-                texte = etape.texte
+                etape.titre,
+                etape.texte
             };
 
-            int rowsAffected = await _dbSession.Connection.ExecuteAsync(query, parameters);
+            int rowsAffected = await _dbSession.Connection.ExecuteAsync(query, parameters, transaction: _dbSession.Transaction);
 
             if (rowsAffected > 0)
             {
@@ -117,7 +116,7 @@ namespace DelicesDuJour_ApiRest.DataAccessLayer.Repositories.Recettes
                 id_recette = key.t,
                 numero = key.v                
             };
-            int numLine = await _dbSession.Connection.ExecuteAsync(query, parameters);
+            int numLine = await _dbSession.Connection.ExecuteAsync(query, parameters, transaction: _dbSession.Transaction);
             return numLine != 0;            
         }
 

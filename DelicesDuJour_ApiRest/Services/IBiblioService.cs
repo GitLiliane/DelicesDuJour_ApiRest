@@ -25,5 +25,43 @@ namespace DelicesDuJour_ApiRest.Services
 
         #endregion Fin Etapes
 
+        #region Catégories
+
+        Task<IEnumerable<Categorie>> GetAllCategoriesAsync();
+        Task<Categorie> GetCategorieByIdAsync(int id);
+        Task<Categorie> AddCategorieAsync(Categorie newCategorie);
+        Task<Categorie> ModifyCategorieAsync(Categorie updateCategorie);
+        Task<bool> DeleteCategorieAsync(int id);
+
+        #endregion Fin Catégories
+
+        #region Relations Recettes - Categories
+
+        Task<IEnumerable<RecetteCategorieRelationship>> GetAllRecettesCategoriesAsync();
+        Task<bool> AddRecetteCategorieRelationshipAsync(int idCategorie, int idRecette);
+        Task<bool> RemoveRecetteCategorieRelationshipAsync(int idCategorie, int idRecette);
+        Task<IEnumerable<Recette>> GetRecettesByIdCategorieAsync(int idCategorie);
+        Task<IEnumerable<Categorie>> GetCategoriesByIdRecetteAsync(int idCategorie);
+        Task<bool> DeleteRecetteRelationsAsync(int idRecette);
+        Task<bool> DeleteCategorieRelationsAsync(int idCategorie);
+
+        #endregion Fin Relations Recettes - Categories
+
+        #region Gestion Ingredients
+
+        Task<IEnumerable<Ingredient>> GetAllIngredientsAsync();
+
+        Task<Ingredient> GetIngredientByIdAsync(int id);
+
+        Task<Ingredient> AddIngredientAsync(Ingredient newIngredient);
+
+        Task<Ingredient> ModifyIngredientAsync(Ingredient updateIngredient);
+
+        Task<bool> DeleteIngredientAsync(int id);
+        
+
+        #endregion Fin Gestion Ingredients
+
+
     }
 }
