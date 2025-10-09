@@ -1,6 +1,7 @@
 ﻿using DelicesDuJour_ApiRest.DataAccessLayer.Repositories.Categories;
 using DelicesDuJour_ApiRest.DataAccessLayer.Repositories.Etapes;
 using DelicesDuJour_ApiRest.DataAccessLayer.Repositories.Ingredients;
+using DelicesDuJour_ApiRest.DataAccessLayer.Repositories.QuantiteIngred;
 using DelicesDuJour_ApiRest.DataAccessLayer.Repositories.Recettes;
 using DelicesDuJour_ApiRest.DataAccessLayer.Session;
 using DelicesDuJour_ApiRest.DataAccessLayer.Session.MariaDB;
@@ -34,7 +35,9 @@ namespace DelicesDuJour_ApiRest.DataAccessLayer
             services.AddTransient<IEtapeRepository, EtapeRepository>();
             services.AddTransient<ICategorieRepository, CategorieRepository>();
             services.AddTransient<IIngredientRepository, IngredientRepository>();
-            
+            services.AddTransient<IQuantiteIngredRepository, QuantiteIngredRepository>();
+
+
 
         }
     }

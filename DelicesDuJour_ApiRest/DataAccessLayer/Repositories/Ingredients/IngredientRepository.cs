@@ -9,7 +9,7 @@ namespace DelicesDuJour_ApiRest.DataAccessLayer.Repositories.Ingredients
     public class IngredientRepository : IIngredientRepository
     {
         const string INGREDIENT_TABLE = "ingredients";
-        
+        const string RECETTE_INGREDIENT_TABLE = "ingredients_recettes";
         readonly IDBSession _dbSession;
 
         public IngredientRepository(IDBSession dBSession)
@@ -57,14 +57,11 @@ namespace DelicesDuJour_ApiRest.DataAccessLayer.Repositories.Ingredients
             return numLine != 0;
         }
 
-        #region Relation Recette Ingredient
-
-        public async Task<IEnumerable<Author>> GetAuthorsByIdBookAsync(int idBook)
+        public async Task<IEnumerable<Ingredient>> GetIngredientsByIdRecetteAsync(int idRecette)
         {
-            string query = $"SELECT a.* FROM {AUTHOR_TABLE} a JOIN {AUTHOR_BOOK_TABLE} ab ON a.id = ab.idauthor WHERE ab.idbook = @idBook";
-            return await _dbSession.Connection.QueryAsync<Author>(query, new { idBook }, transaction: _dbSession.Transaction);
+            string query = $"SELECT * FROM {INGREDIENT_TABLE} i JOIN {RECETTE_INGREDIENT_TABLE} ri ON i.id = ri.id_ingredient WHERE ri.id_recette = @idRecette";
+            return await _dbSession.Connection.QueryAsync<Ingredient>(query, new { idRecette }, transaction: _dbSession.Transaction);
         }
 
-        #endregion FIN Relation Recette Ingredient
     }
 }

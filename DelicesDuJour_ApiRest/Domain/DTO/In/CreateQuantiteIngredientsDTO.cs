@@ -5,7 +5,8 @@ namespace DelicesDuJour_ApiRest.Domain.DTO.In
     public class CreateQuantiteIngredientsDTO
     {
         public int id_ingredient { get; set; }
-        public int id_recette { get; set; }        
+        public int id_recette { get; set; }
+        public string nom { get; set; }
         public string quantite { get; set; }
     }
 

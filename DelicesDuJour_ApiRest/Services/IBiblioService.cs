@@ -1,4 +1,6 @@
 ﻿using DelicesDuJour_ApiRest.Domain.BO;
+using DelicesDuJour_ApiRest.Domain.DTO.In;
+using DelicesDuJour_ApiRest.Domain.DTO.Out;
 using static Mysqlx.Expect.Open.Types.Condition.Types;
 
 namespace DelicesDuJour_ApiRest.Services
@@ -18,10 +20,10 @@ namespace DelicesDuJour_ApiRest.Services
         #region Etapes
 
         Task<IEnumerable<Etape>> GetAllEtapesAsync();
-        Task<Etape> GetEtapeByIdAsync(TupleClass<int, int> key);
+        Task<IEnumerable<Etape>> GetEtapesByIdRecetteAsync(int id);
         Task<Etape> AddEtapeAsync(Etape newEtape);
         Task<Etape> ModifyEtapeAsync(Etape updateEtape);
-        Task<bool> DeleteEtapeAsync(TupleClass<int, int> key);
+        Task<bool> DeleteEtapeAsync(int id);
 
         #endregion Fin Etapes
 
@@ -58,10 +60,32 @@ namespace DelicesDuJour_ApiRest.Services
         Task<Ingredient> ModifyIngredientAsync(Ingredient updateIngredient);
 
         Task<bool> DeleteIngredientAsync(int id);
-        
+
 
         #endregion Fin Gestion Ingredients
 
+        #region Gestion des relations entre Recettes et Ingredients
+
+        Task<IEnumerable<QuantiteIngredients>> GetQuantiteIngredientsAsync();        
+
+        Task<QuantiteIngredients> GetQuantiteIngredientsByIdAsync((int, int) key);
+       
+        Task<QuantiteIngredients> AddRecetteIngredientRelationshipAsync(QuantiteIngredients CreateRelationRI);        
+
+        Task<QuantiteIngredients> updateRecetteIngredientRelationshipAsync(QuantiteIngredients updateRelationRI);        
+
+        Task<bool> RemoveRecetteIngredientRelationshipAsync((int, int) key);
+        
+
+        Task<IEnumerable<Recette>> GetRecettesByIdIngredientAsync(int idIngredient);       
+
+        Task<IEnumerable<QuantiteIngredients>> GetIngredientsByIdRecetteAsync(int idRecette);      
+
+        Task<bool> DeleteRecetteRelationsIngredientAsync(int idRecette);        
+
+        Task<bool> DeleteIngredientRelationsAsync(int idIngredient);       
+
+        #endregion Fin Gestion des relations entre Recettes et Ingredients
 
     }
 }

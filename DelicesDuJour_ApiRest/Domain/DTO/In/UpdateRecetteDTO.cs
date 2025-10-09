@@ -1,4 +1,5 @@
-﻿using FluentValidation;
+﻿using DelicesDuJour_ApiRest.Domain.BO;
+using FluentValidation;
 using System;
 using System.ComponentModel.DataAnnotations;
 
@@ -17,8 +18,8 @@ namespace DelicesDuJour_ApiRest.Domain.DTO.In
 
         [Range(1, 3)]
         public int difficulte { get; set; }
-        //public List<Etape>? etapes { get; set; } = new List<Etape>();
-        //public List<Ingredient>? ingredients { get; set; } = new List<Ingredient>();
+        public List<UpdateEtapeDTO>? etapes { get; set; } = new List<UpdateEtapeDTO>();
+        public List<Ingredient>? ingredients { get; set; } = new List<Ingredient>();
         //public List<Categorie> categories { get; set; } = new List<Categorie>();
         //public string? photo { get; set; }
         //public IFormFile photoFile { get; set; }

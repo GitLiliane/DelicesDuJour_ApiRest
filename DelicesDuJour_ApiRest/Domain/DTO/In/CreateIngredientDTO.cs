@@ -5,6 +5,7 @@ namespace DelicesDuJour_ApiRest.Domain.DTO.In
     public class CreateIngredientDTO
     {
         public string nom { get; set; }
+        public string quantite { get; set; }
     }
 
     public class CreateIngredientDTOValidator : AbstractValidator<CreateIngredientDTO>

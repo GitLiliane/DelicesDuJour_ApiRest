@@ -2,7 +2,11 @@
 using DelicesDuJour_ApiRest.DataAccessLayer.Repositories.Recettes;
 using DelicesDuJour_ApiRest.DataAccessLayer.Unit_of_Work;
 using DelicesDuJour_ApiRest.Domain.BO;
+using DelicesDuJour_ApiRest.Domain.DTO.In;
+using DelicesDuJour_ApiRest.Domain.DTO.Out;
+using MySqlX.XDevAPI.Common;
 using System.Diagnostics.Eventing.Reader;
+using static Mysqlx.Expect.Open.Types.Condition.Types;
 
 namespace DelicesDuJour_ApiRest.Services
 {
@@ -33,19 +37,138 @@ namespace DelicesDuJour_ApiRest.Services
 
         public async Task<Recette> GetRecetteByIdAsync(int id)
         {
-            return await _UoW.Recettes.GetAsync(id);
+            var recette = await _UoW.Recettes.GetAsync(id);
+
+            var listEtapes = await _UoW.Etapes.GetEtapesByIdRecetteAsync(id);
+
+            var listQuantiteIngredients = await _UoW.QuantiteIngred.GetIngredientsByIdRecetteAsync(id);
+
+            var listIngredients = await _UoW.Ingredients.GetIngredientsByIdRecetteAsync(id);
+
+            Recette recetteCompleteDTO = new()
+            {
+                Id = recette.Id,
+                nom = recette.nom,
+                temps_preparation = recette.temps_preparation,
+                temps_cuisson = recette.temps_cuisson,
+                difficulte = recette.difficulte,
+                ingredients = listIngredients.ToList(),
+                etapes = listEtapes.ToList()
+            };
+            return recetteCompleteDTO;
         }
 
         public async Task<Recette> AddRecetteAsync(Recette newRecette)
         {
-            // parcourir tous les ingredients de la recettes
+            _UoW.BeginTransaction();
+
+            // Gestion Ingredients
+            var ingredientsExistants = (await _UoW.Ingredients.GetAllAsync()).ToList();
+            List<Ingredient> newIngredients = new();
+
+            foreach (Ingredient i in newRecette.ingredients)
             {
-                // si l'ingredient n'existe pas => on le crée (avec le repo des ingredients)
+                Ingredient? newIngredient = null;
+
+                // On cherche un ingrédient avec le même nom
+                foreach (Ingredient ingredient in ingredientsExistants)
+                {
+                    if (!string.IsNullOrEmpty(i.nom) && ingredient.nom == i.nom)
+                    {
+                        // trouvé → on le réutilise
+                        newIngredient = ingredient;
+                        newIngredient.quantite = i.quantite;
+                        break; // on s'arrête ici
+                    }
+                }
+
+                // Si on n’a rien trouvé, on le crée
+                if (newIngredient == null)
+                {
+                    newIngredient = await _UoW.Ingredients.CreateAsync(new Ingredient
+                    {
+                        nom = i.nom
+                    });
+                    newIngredient.quantite = i.quantite;
+
+                    // l'ajouter à la liste des existants
+                    // pour éviter de le recréer à la prochaine boucle
+                    ingredientsExistants.Add(newIngredient);
+                }
+
+                newIngredients.Add(newIngredient);
             }
-            // await _UoW.Recettes.CreateAsync(newRecette)
+
+            newRecette.ingredients = newIngredients;
+
+
+
+
+            var CreatedRecette = await _UoW.Recettes.CreateAsync(newRecette);
+
+            List<QuantiteIngredients> listQuantiteIngredients = new();
+
+            foreach (Ingredient ingredient in newRecette.ingredients)
+            {
+                QuantiteIngredients quantiteIngredients = new()
+                {
+                    id_ingredient = ingredient.id,
+                    id_recette = CreatedRecette.Id,
+                    quantite = ingredient.quantite
+                };
+
+                listQuantiteIngredients.Add(quantiteIngredients);
+            }
 
             // création des liens entre la recette et chaque ingedients (la nouvelle méthode du repo des recettes)
-            return await _UoW.Recettes.CreateAsync(newRecette);
+            if (CreatedRecette is not null)
+            {
+                foreach (QuantiteIngredients quantiteIngredients in listQuantiteIngredients)
+                {
+                    await _UoW.QuantiteIngred.CreateAsync(quantiteIngredients);
+                }
+            }
+
+            // Création des étapes de la recette
+            List<Etape> createdEtapes = new();
+
+            foreach (Etape etape in newRecette.etapes)
+            {
+                etape.id_recette = CreatedRecette.Id;
+                var createdEtape = await _UoW.Etapes.CreateAsync(etape);
+                createdEtapes.Add(createdEtape);
+            }
+
+            // Création des relations recette/catégories
+
+            List<Categorie> categoriesCreatedRecette = new();
+
+            foreach (Categorie categorie in newRecette.categories)
+            {
+                var relationRecetteCategorie = await _UoW.Recettes.AddRecetteCategorieRelationshipAsync(categorie.id, newRecette.Id);
+                if (relationRecetteCategorie == true)
+                {
+                    categoriesCreatedRecette = newRecette.categories;
+                }
+
+            }
+
+            Recette recetteComplete = new()
+            {
+                Id = CreatedRecette.Id,
+                nom = CreatedRecette.nom,
+                temps_preparation = CreatedRecette.temps_preparation,
+                temps_cuisson = CreatedRecette.temps_cuisson,
+                difficulte = CreatedRecette.difficulte,
+                etapes = createdEtapes,
+                ingredients = newIngredients,
+                categories = categoriesCreatedRecette
+            };
+
+            if (recetteComplete is not null)
+                _UoW.Commit();
+
+            return recetteComplete;
         }
 
         public async Task<Recette> ModifyRecetteAsync(Recette updateRecette)
@@ -80,9 +203,9 @@ namespace DelicesDuJour_ApiRest.Services
             return await _UoW.Etapes.GetAllAsync();
         }
 
-        public async Task<Etape> GetEtapeByIdAsync(TupleClass<int, int> key)
+        public async Task<IEnumerable<Etape>> GetEtapesByIdRecetteAsync(int id)
         {
-            return await _UoW.Etapes.GetAsync(key);
+            return await _UoW.Etapes.GetEtapesByIdRecetteAsync(id);
         }
 
         public async Task<Etape> AddEtapeAsync(Etape newEtape)
@@ -95,9 +218,9 @@ namespace DelicesDuJour_ApiRest.Services
             return await _UoW.Etapes.ModifyAsync(updateEtape);
         }
 
-        public async Task<bool> DeleteEtapeAsync(TupleClass<int, int> key)
+        public async Task<bool> DeleteEtapeAsync(int id)
         {
-            return await _UoW.Etapes.DeleteAsync(key);
+            return await _UoW.Etapes.DeleteAsync(id);
         }
 
 
@@ -220,37 +343,51 @@ namespace DelicesDuJour_ApiRest.Services
 
         #endregion Fin Gestion Ingredients
 
-        #region Fin Gestion des relations entre Recettes et Ingredients
+        #region Gestion des relations entre Recettes et Ingredients
 
-        public async Task<bool> AddRecetteIngredientRelationshipAsync(int idIngredient, int idRecette, string quantite)
+        public async Task<IEnumerable<QuantiteIngredients>> GetQuantiteIngredientsAsync()
         {
-            return await _UoW.Recettes.AddRecetteIngredientRelationshipAsync(idIngredient, idRecette, quantite);
+            return await _UoW.QuantiteIngred.GetAllAsync();
         }
 
-        public async Task<bool> RemoveRecetteIngredientRelationshipAsync(int idIngredient, int idRecette)
+        public async Task<QuantiteIngredients> GetQuantiteIngredientsByIdAsync((int, int) key)
         {
-            return await _UoW.Recettes.RemoveRecetteIngredientRelationshipAsync(idIngredient, idRecette);
+            return await _UoW.QuantiteIngred.GetAsync(key);
+        }
+        public async Task<QuantiteIngredients> AddRecetteIngredientRelationshipAsync(QuantiteIngredients CreateRelationRI)
+        {
+            return await _UoW.QuantiteIngred.CreateAsync(CreateRelationRI);
+        }
+
+        public async Task<QuantiteIngredients> updateRecetteIngredientRelationshipAsync(QuantiteIngredients updateRelationRI)
+        {
+            return await _UoW.QuantiteIngred.ModifyAsync(updateRelationRI);
+        }
+
+        public async Task<bool> RemoveRecetteIngredientRelationshipAsync((int, int) key)
+        {
+            return await _UoW.QuantiteIngred.DeleteAsync(key);
         }
 
         public async Task<IEnumerable<Recette>> GetRecettesByIdIngredientAsync(int idIngredient)
         {
-            return await _UoW.Recettes.GetRecettesByIdIngredientAsync(idIngredient);
+            return await _UoW.QuantiteIngred.GetRecettesByIdIngredientAsync(idIngredient);
         }
 
-        //public async Task<IEnumerable<Ingredient>> GetIngredientsByIdRecetteAsync(int idRecette)
-        //{
-        //    return await _UoW.Ingredients.GetIngredientsByIdRecetteAsync(idRecette);
-        //}
+        public async Task<IEnumerable<QuantiteIngredients>> GetIngredientsByIdRecetteAsync(int idRecette)
+        {
+            return await _UoW.QuantiteIngred.GetIngredientsByIdRecetteAsync(idRecette);
+        }
 
         public async Task<bool> DeleteRecetteRelationsIngredientAsync(int idRecette)
         {
-            return await _UoW.Recettes.DeleteRecetteRelationsAsync(idRecette);
+            return await _UoW.QuantiteIngred.DeleteRecetteRelationsIngredientAsync(idRecette);
         }
 
-        //public async Task<bool> DeleteIngredientRelationsAsync(int idIngredient)
-        //{
-        //    return await _UoW.Ingredients.DeleteIngredientRelationsAsync(idIngredient);
-        //}
+        public async Task<bool> DeleteIngredientRelationsAsync(int idIngredient)
+        {
+            return await _UoW.QuantiteIngred.DeleteIngredientRelationsRecetteAsync(idIngredient);
+        }
 
         #endregion Fin Gestion des relations entre Recettes et Ingredients
 

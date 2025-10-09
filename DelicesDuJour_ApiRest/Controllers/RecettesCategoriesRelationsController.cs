@@ -17,6 +17,7 @@ namespace DelicesDuJour_ApiRest.Controllers
         {
             _biblioService = biblioService;
         }
+
         [Authorize(Roles = "Administrateur")]
         [HttpGet()]
         [ProducesResponseType(StatusCodes.Status200OK)]

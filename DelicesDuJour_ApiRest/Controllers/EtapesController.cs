@@ -32,11 +32,8 @@ namespace DelicesDuJour_ApiRest.Controllers
                 // Assigner la propriété Key en créant une nouvelle instance de TupleDTO
                 // 'e.Key.t' représente la première partie de votre clé (par ex. id_recette)
                 // 'e.Key.v' représente la deuxième partie (par ex. numero)
-                Key = new TupleDTO<int, int>
-                {
-                    t = e.Key.t,
-                    v = e.Key.v
-                },
+                id_recette = e.id_recette,
+                numero = e.numero,
                 titre = e.titre,
                 texte = e.texte
             });
@@ -44,31 +41,29 @@ namespace DelicesDuJour_ApiRest.Controllers
             return Ok(etapeDTOs);
         }
 
-        [HttpGet("{id_recette}/{numero}")]
+        [HttpGet("{id_recette}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> GetEtapeById([FromRoute] int id_recette, [FromRoute] int numero)
-        {
-            // Créez l'objet de clé composite à l'intérieur de la méthode
-            var key = new TupleClass<int, int>((id_recette, numero));
+        public async Task<IActionResult> GetEtapeByIdRecette([FromRoute] int id_recette)
+        {            
+            var etapes = await _biblioservice.GetEtapesByIdRecetteAsync(id_recette);
 
-            var etape = await _biblioservice.GetEtapeByIdAsync(key);
-
-            if (etape is null)
+            if (etapes is null)
                 return NotFound();
 
-            EtapeDTO etapeDTO = new()
-            {
-                Key = new TupleDTO<int, int>
-                {
-                    t = etape.Key.t,
-                    v = etape.Key.v
-                },
-                titre = etape.titre,
-                texte = etape.texte
-            };
 
-            return Ok(etapeDTO);
+            IEnumerable<EtapeDTO> etapeDTOs = etapes.Select(e => new EtapeDTO()
+            {
+                // Assigner la propriété Key en créant une nouvelle instance de TupleDTO
+                // 'e.Key.t' représente la première partie de votre clé (par ex. id_recette)
+                // 'e.Key.v' représente la deuxième partie (par ex. numero)
+                id_recette = e.id_recette,
+                numero = e.numero,
+                titre = e.titre,
+                texte = e.texte
+            });
+
+            return Ok(etapeDTOs);
         }
 
         
@@ -82,11 +77,11 @@ namespace DelicesDuJour_ApiRest.Controllers
 
             Etape etape = new()
             {
-                Key = new TupleClass<int, int>
-                {
-                    t = request.Key.t,
-                    v = request.Key.v
-                },
+                //Key = new TupleClass<int, int>
+                //{
+                //    t = request.Key.t,
+                //    v = request.Key.v
+                //},
                 titre = request.titre,
                 texte = request.texte
             };
@@ -98,16 +93,16 @@ namespace DelicesDuJour_ApiRest.Controllers
 
             EtapeDTO newEtapeDTO = new()
             {
-                Key = new TupleDTO<int, int>
-                {
-                    t = etape.Key.t,
-                    v = etape.Key.v
-                },
+                //Key = new TupleDTO<int, int>
+                //{
+                //    t = etape.Key.t,
+                //    v = etape.Key.v
+                //},
                 titre = etape.titre,
                 texte = etape.texte
             };
 
-            return CreatedAtAction(nameof(GetEtapeById), new { id_recette = newEtapeDTO.Key.t, numero = newEtapeDTO.Key.v }, newEtapeDTO);
+            return null;  /*CreatedAtAction(nameof(GetEtapeById), new { id_recette = newEtapeDTO.Key.t, numero = newEtapeDTO.Key.v }, newEtapeDTO);*/
 
         }
 
@@ -120,11 +115,11 @@ namespace DelicesDuJour_ApiRest.Controllers
 
             Etape updateE = new()
             {
-                Key = new TupleClass<int, int>
-                {
-                    t = id_recette,
-                    v = numero
-                },
+                //Key = new TupleClass<int, int>
+                //{
+                //    t = id_recette,
+                //    v = numero
+                //},
                 titre = updateEtapeDTO.titre,
                 texte = updateEtapeDTO.texte
             };
@@ -136,11 +131,11 @@ namespace DelicesDuJour_ApiRest.Controllers
 
             EtapeDTO etapeDTO = new()
             {
-                Key = new TupleDTO<int, int>
-                {
-                    t = updateEtape.Key.t,
-                    v = updateEtape.Key.v
-                },
+                //Key = new TupleDTO<int, int>
+                //{
+                //    t = updateEtape.Key.t,
+                //    v = updateEtape.Key.v
+                //},
                 titre = updateEtapeDTO.titre,
                 texte = updateEtapeDTO.texte
             };
@@ -155,8 +150,8 @@ namespace DelicesDuJour_ApiRest.Controllers
 
         public async Task<IActionResult> DeleteEtape(int id_recette, int numero)
         {
-            var key = new TupleClass<int, int>((id_recette, numero));
-            var sucess = await _biblioservice.DeleteEtapeAsync(key);
+            //var key = new TupleClass<int, int>((id_recette, numero));
+            var sucess = await _biblioservice.DeleteEtapeAsync(id_recette);
 
             return sucess ? NoContent() : NotFound();
         }

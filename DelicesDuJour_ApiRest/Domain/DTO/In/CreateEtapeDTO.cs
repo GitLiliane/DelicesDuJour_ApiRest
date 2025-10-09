@@ -4,8 +4,8 @@ using FluentValidation;
 namespace DelicesDuJour_ApiRest.Domain.DTO.In
 {
     public class CreateEtapeDTO
-    {
-        public TupleDTO<int, int> Key { get; set; }
+    {        
+        public int numero { get; set; }
         public string titre { get; set; }
         public string texte { get; set; }
     }

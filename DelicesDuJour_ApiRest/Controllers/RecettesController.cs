@@ -4,6 +4,7 @@ using DelicesDuJour_ApiRest.Domain.DTO.Out;
 using DelicesDuJour_ApiRest.Services;
 using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
+using System.Collections.Immutable;
 
 
 namespace DelicesDuJour_ApiRest.Controllers
@@ -36,7 +37,7 @@ namespace DelicesDuJour_ApiRest.Controllers
                 //ingredients = r.ingredients,
                 //avis = r.avis,
                 //categories =r.categories,
-                photo = r.photo
+                //photo = r.photo
             });
 
             return Ok(response);
@@ -52,6 +53,47 @@ namespace DelicesDuJour_ApiRest.Controllers
 
             if (recette is null)
                 return NotFound();
+           
+            List<IngredientDTO> ingredientDTOs = new();
+
+            foreach (Ingredient ingredient in recette.ingredients)
+            {
+                IngredientDTO ingredientDTO = new()
+                {
+                    id = ingredient.id,
+                    nom = ingredient.nom,
+                    quantite = ingredient.quantite
+                };
+                                
+                ingredientDTOs.Add(ingredientDTO);
+            }
+
+            List<EtapeDTO> etapeDTOs = new();
+
+            foreach (Etape etape in recette.etapes)
+            {
+                EtapeDTO etapeDTO = new()
+                {
+                    numero = etape.numero,
+                    titre = etape.titre,
+                    texte = etape.texte
+                };
+
+                etapeDTOs.Add(etapeDTO);
+            }
+
+            List<CategorieDTO> categorieDTOs = new();
+
+            foreach (Categorie categorie in recette.categories)
+            {
+                CategorieDTO categorieDTO = new()
+                {
+                    id = categorie.id,
+                    nom = categorie.nom
+                };
+
+                categorieDTOs.Add(categorieDTO);
+            }
 
             RecetteDTO recetteDTO = new()
             {
@@ -60,11 +102,10 @@ namespace DelicesDuJour_ApiRest.Controllers
                 temps_preparation = recette.temps_preparation,
                 temps_cuisson = recette.temps_cuisson,
                 difficulte = recette.difficulte,
-                //etapes = recette.etapes,
-                //ingredients = recette.ingredients,
-                //avis = recette.avis,
-                //categories = recette.categories,
-                photo = recette.photo
+                etapes = etapeDTOs,
+                ingredients = ingredientDTOs,               
+                categories = categorieDTOs,
+                //photo = recette.photo
             };
 
             return Ok(recetteDTO);
@@ -78,33 +119,114 @@ namespace DelicesDuJour_ApiRest.Controllers
         {
             validator.ValidateAndThrow(request);
 
+            List<Ingredient> ingredients = new();
+
+            foreach (IngredientDTO ingredientDTO in request.ingredients)
+            {
+                Ingredient ingredient = new()
+                {
+                    id = ingredientDTO.id,
+                    nom = ingredientDTO.nom,
+                    quantite = ingredientDTO.quantite
+                };
+
+                ingredients.Add(ingredient);
+            }
+
+            List<Etape> etapes = new();
+
+            foreach (CreateEtapeDTO createEtapeDTO in request.etapes)
+            {
+                Etape etape = new()
+                {                    
+                    numero = createEtapeDTO.numero,
+                    titre = createEtapeDTO.titre,
+                    texte = createEtapeDTO.texte
+                };
+
+                etapes.Add(etape);
+            }
+
+            List<Categorie> categories = new();
+
+            foreach (CategorieDTO categorieDTO in request.categories)
+            {
+                Categorie categorie = new()
+                {
+                    id = categorieDTO.id,
+                    nom = categorieDTO.nom
+                };
+
+                categories.Add(categorie);
+            }
+
             Recette recette = new()
             {
                 nom = request.nom,
                 temps_preparation = request.temps_preparation,
                 temps_cuisson = request.temps_cuisson,
                 difficulte = request.difficulte,
-                //etapes = request.etapes,
-                //ingredients = request.ingredients,                
-                //categories = request.categories,
-                photo = request.photo
+                etapes = etapes,
+                ingredients = ingredients,
+                categories = categories                
             };
 
             var newRecette = await _biblioservice.AddRecetteAsync(recette);
 
-            if (recette == null)
+            if (newRecette == null)
                 return BadRequest("Invalid Reciep data.");
+
+            List<IngredientDTO> ingredientDtos = new();
+
+            foreach (Ingredient ingredient in newRecette.ingredients)
+            {
+                IngredientDTO ingredientDTO = new()
+                {
+                    id = ingredient.id,
+                    nom = ingredient.nom,
+                    quantite = ingredient.quantite
+                };
+
+                ingredientDtos.Add(ingredientDTO);
+            }
+
+            List<EtapeDTO> etapeDtos = new();
+
+            foreach (Etape etape in newRecette.etapes)
+            {
+                EtapeDTO etapeDTO = new()
+                {
+                    numero = etape.numero,
+                    titre = etape.titre,
+                    texte = etape.texte
+                };
+
+                etapeDtos.Add(etapeDTO);
+            }
+
+            List<CategorieDTO> categorieDtos = new();
+
+            foreach (Categorie categorie in newRecette.categories)
+            {
+                CategorieDTO categorieDTO = new()
+                {
+                    id = categorie.id,
+                    nom = categorie.nom
+                };
+
+                categorieDtos.Add(categorieDTO);
+            }
 
             RecetteDTO newRecetteDTO = new()
             {
+                Id = newRecette.Id,
                 nom = newRecette.nom,
                 temps_preparation = newRecette.temps_preparation,
                 temps_cuisson = newRecette.temps_cuisson,
                 difficulte = newRecette.difficulte,
-                //etapes = newRecette.etapes,
-                //ingredients = newRecette.ingredients,
-                //categories = newRecette.categories,
-                photo = newRecette.photo
+                etapes = etapeDtos,
+                ingredients = ingredientDtos,
+                categories = categorieDtos
             };
 
             return CreatedAtAction(nameof(GetRecetteById), new { id = newRecetteDTO.Id }, newRecetteDTO);
@@ -147,10 +269,10 @@ namespace DelicesDuJour_ApiRest.Controllers
                 //etapes = updateRecette.etapes,
                 //ingredients = updateRecette.ingredients,
                 //categories = updateRecette.categories,
-                photo = updateRecette.photo
+                //photo = updateRecette.photo
             };
 
-            return Ok(recetteDTO);     
+            return Ok(recetteDTO);
 
         }
 

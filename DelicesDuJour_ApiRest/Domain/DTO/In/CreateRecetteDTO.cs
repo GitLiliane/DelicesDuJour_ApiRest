@@ -1,4 +1,6 @@
-﻿using FluentValidation;
+﻿using DelicesDuJour_ApiRest.Domain.BO;
+using DelicesDuJour_ApiRest.Domain.DTO.Out;
+using FluentValidation;
 using System;
 using System.ComponentModel.DataAnnotations;
 
@@ -14,14 +16,13 @@ namespace DelicesDuJour_ApiRest.Domain.DTO.In
 
         [DataType(DataType.Time)]
         public TimeSpan temps_cuisson { get; set; }
-
-        [Range(1, 3)]
+               
         public int difficulte { get; set; }
-        //public List<Etape>? etapes { get; set; } = new List<Etape>();
-        //public List<Ingredient>? ingredients { get; set; } = new List<Ingredient>();
-        //public List<Categorie> categories { get; set; } = new List<Categorie>();
-        public string? photo { get; set; }
-        //public IFormFile photoFile { get; set; }
+        public List<CreateEtapeDTO>? etapes { get; set; } = new List<CreateEtapeDTO>();
+        public List<IngredientDTO>? ingredients { get; set; } = new List<IngredientDTO>();
+        public List<CategorieDTO> categories { get; set; } = new List<CategorieDTO>();
+        //public string? photo { get; set; }
+        ////public IFormFile photoFile { get; set; }
 
     }
 
@@ -38,7 +39,7 @@ namespace DelicesDuJour_ApiRest.Domain.DTO.In
             //RuleFor(r => r.etapes).NotNull().NotEmpty().WithMessage("Les étapes sont obligatoires.");
             //RuleFor(r => r.ingredients).NotNull().NotEmpty().WithMessage("Les ingrédients sont obligatoires.");
             //RuleFor(r => r.categories).NotNull().NotEmpty().WithMessage("Le choix de catégorie(s) est obligatoire.");
-            RuleFor(r => r.photo).NotNull().NotEmpty().WithMessage("Une image est requise.");
+            /*RuleFor(r => r.photo).NotNull().NotEmpty().WithMessage("Une image est requise.")*/;
         }
     }
 
