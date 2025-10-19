@@ -312,7 +312,7 @@ public class RecettesControllerTest
 
         public Task<IEnumerable<Recette>> GetAllRecettesAsync() => Task.FromResult(_getAllRecettesResult ?? Enumerable.Empty<Recette>());
         public Task<Recette> GetRecetteByIdAsync(int id) => Task.FromResult(_getRecetteByIdResult!);
-        public Task<Recette> AddRecetteAsync(Recette newRecette, IFormFile? photoFile) => Task.FromResult(_addRecetteResult ?? newRecette);
+        public Task<Recette> AddRecetteAsync(Recette newRecette, IFormFile? photoFile) => Task.FromResult(_addRecetteResult!);
         public Task<Recette> ModifyRecetteAsync(Recette updateRecette) => Task.FromResult(_modifyRecetteResult!);
         public Task<bool> DeleteRecetteAsync(int id) => Task.FromResult(_deleteRecetteResult ?? true);
 
