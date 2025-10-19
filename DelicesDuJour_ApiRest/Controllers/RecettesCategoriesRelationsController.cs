@@ -18,7 +18,7 @@ namespace DelicesDuJour_ApiRest.Controllers
             _biblioService = biblioService;
         }
 
-        [Authorize(Roles = "Administrateur")]
+        [Authorize(Roles = "Administrateur, Utilisateur")]
         [HttpGet()]
         [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<IActionResult> GetAllRecettesCategories()
@@ -54,6 +54,7 @@ namespace DelicesDuJour_ApiRest.Controllers
             return success ? NoContent() : NotFound();
         }
 
+        [Authorize(Roles = "Administrateur, Utilisateur")]
         [HttpGet(nameof(GetRecettesByIdCategorie) + "/{idCategorie}")]
         public async Task<IActionResult> GetRecettesByIdCategorie([FromRoute] int idCategorie)
         {

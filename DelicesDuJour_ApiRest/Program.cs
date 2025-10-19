@@ -139,7 +139,6 @@ namespace DelicesDuJour_ApiRest
 
             // Middleware global de gestion des exceptions
             app.UseMiddleware<GlobalExceptionMiddleware>();
-
             // Configuration du pipeline HTTP
             if (app.Environment.IsDevelopment())
             {
@@ -150,6 +149,9 @@ namespace DelicesDuJour_ApiRest
             // Ajout de la sécurité
             app.UseAuthentication(); // Toujours avant UseAuthorization
             app.UseAuthorization();
+
+            // Permet d'accéder aux fichiers dans wwwroot pour les images de recettes
+            app.UseStaticFiles();
 
             // Mappage des contrôleurs
             app.MapControllers();

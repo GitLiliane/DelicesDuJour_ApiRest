@@ -7,6 +7,29 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Content Remove="wwwroot\images\recettes\ChoucrouteMaison.jpg" />
+    <Content Remove="wwwroot\images\recettes\Choucroute_maison.jpg" />
+    <Content Remove="wwwroot\images\recettes\crabe_a_lantillaise.jpg" />
+    <Content Remove="wwwroot\images\recettes\filetDepoulet.jpg" />
+    <Content Remove="wwwroot\images\recettes\filet_depoulet_lit_de_salade.jpg" />
+    <Content Remove="wwwroot\images\recettes\gateauAuChocolat.webp" />
+    <Content Remove="wwwroot\images\recettes\hamburgerMaison.jpg" />
+    <Content Remove="wwwroot\images\recettes\hamburger_maison.jpg" />
+    <Content Remove="wwwroot\images\recettes\pates_italie.jpg" />
+    <Content Remove="wwwroot\images\recettes\pizza_margarita.jpg" />
+    <Content Remove="wwwroot\images\recettes\poulet.jpg" />
+    <Content Remove="wwwroot\images\recettes\poulet_riz_safrané.jpg" />
+    <Content Remove="wwwroot\images\recettes\ragout_de_boeuf.jpg" />
+    <Content Remove="wwwroot\images\recettes\rouleaux_de_pringtemps.jpg" />
+    <Content Remove="wwwroot\images\recettes\salade_tuti_frutti.jpg" />
+    <Content Remove="wwwroot\images\recettes\samousas_de_boeuf.jpg" />
+    <Content Remove="wwwroot\images\recettes\tacosAmor.jpg" />
+    <Content Remove="wwwroot\images\recettes\tacos_mi_amor.jpg" />
+    <Content Remove="wwwroot\images\recettes\tex-mex.jpg" />
+    <Content Remove="wwwroot\images\recettes\tournedos_aux_morilles.jpg" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Dapper" Version="2.1.66" />
     <PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="12.0.0" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.20" />

@@ -18,8 +18,10 @@ namespace DelicesDuJour_ApiRest.Domain.DTO.In
             //RuleLevelCascadeMode = CascadeMode.Stop;
             //ClassLevelCascadeMode = CascadeMode.Stop;
 
+            RuleFor(e => e.numero).NotNull().NotEmpty().WithMessage("Le numéro de l'étape est obligatoire.");
             RuleFor(e => e.titre).NotNull().NotEmpty().WithMessage("Le titre est obligatoire.");
-          
+            RuleFor(e => e.texte).NotNull().NotEmpty().WithMessage("Le texte est obligatoire.");
+
         }
     }
 }

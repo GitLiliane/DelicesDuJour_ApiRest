@@ -44,10 +44,13 @@ namespace DelicesDuJour_ApiRest.DataAccessLayer.Unit_of_Work
         public bool HasActiveTransaction => _dbSession.HasActiveTransaction;
 
         public void BeginTransaction() 
-            => _dbSession.Commit();
+            => _dbSession.BeginTransaction();
 
         public void Commit() 
             => _dbSession.Commit();
+
+        public void Dispose() => Rollback();
+        
         public void Rollback() 
             => _dbSession.Rollback();
 

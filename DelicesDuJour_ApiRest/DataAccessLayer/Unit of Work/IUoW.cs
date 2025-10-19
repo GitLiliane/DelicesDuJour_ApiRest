@@ -6,7 +6,7 @@ using DelicesDuJour_ApiRest.DataAccessLayer.Repositories.Recettes;
 
 namespace DelicesDuJour_ApiRest.DataAccessLayer.Unit_of_Work
 {
-    public interface IUoW
+    public interface IUoW : IDisposable
     {
         #region Repositories
 

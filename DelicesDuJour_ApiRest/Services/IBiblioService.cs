@@ -11,7 +11,7 @@ namespace DelicesDuJour_ApiRest.Services
 
         Task<IEnumerable<Recette>> GetAllRecettesAsync();
         Task<Recette> GetRecetteByIdAsync(int id);
-        Task<Recette> AddRecetteAsync(Recette newRecette);
+        Task<Recette> AddRecetteAsync(Recette newRecette, IFormFile? photoFile);
         Task<Recette> ModifyRecetteAsync(Recette updateRecette);
         Task<bool> DeleteRecetteAsync(int id);
 
@@ -23,7 +23,7 @@ namespace DelicesDuJour_ApiRest.Services
         Task<IEnumerable<Etape>> GetEtapesByIdRecetteAsync(int id);
         Task<Etape> AddEtapeAsync(Etape newEtape);
         Task<Etape> ModifyEtapeAsync(Etape updateEtape);
-        Task<bool> DeleteEtapeAsync(int id);
+        Task<bool> DeleteEtapeAsync((int, int) key);
 
         #endregion Fin Etapes
 
@@ -74,8 +74,7 @@ namespace DelicesDuJour_ApiRest.Services
 
         Task<QuantiteIngredients> updateRecetteIngredientRelationshipAsync(QuantiteIngredients updateRelationRI);        
 
-        Task<bool> RemoveRecetteIngredientRelationshipAsync((int, int) key);
-        
+        Task<bool> RemoveRecetteIngredientRelationshipAsync((int, int) key);        
 
         Task<IEnumerable<Recette>> GetRecettesByIdIngredientAsync(int idIngredient);       
 

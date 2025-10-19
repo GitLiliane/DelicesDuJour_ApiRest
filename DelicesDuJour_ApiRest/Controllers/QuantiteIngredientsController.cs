@@ -3,6 +3,7 @@ using DelicesDuJour_ApiRest.Domain.DTO.In;
 using DelicesDuJour_ApiRest.Domain.DTO.Out;
 using DelicesDuJour_ApiRest.Services;
 using FluentValidation;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Org.BouncyCastle.Asn1.Ocsp;
@@ -20,6 +21,7 @@ namespace DelicesDuJour_ApiRest.Controllers
             _biblioService = biblioService;
         }
 
+        [Authorize(Roles = "Administrateur, Utilisateur")]
         [HttpGet()]
         [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<IActionResult> GetQuantiteIngredients()
@@ -36,6 +38,7 @@ namespace DelicesDuJour_ApiRest.Controllers
             return Ok(response);
         }
 
+        [Authorize(Roles = "Administrateur, Utilisateur")]
         [HttpGet(nameof(GetQuantiteById) + "/{id_ingredient}/{id_recette}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -59,14 +62,12 @@ namespace DelicesDuJour_ApiRest.Controllers
             return Ok(response);
         }
 
+        [Authorize(Roles = "Administrateur")]
         [HttpPost(nameof(AddRecetteIngredientRelationship) + "/{idIngredient}/{idRecette}")]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> AddRecetteIngredientRelationship([FromRoute] int idIngredient, [FromRoute] int idRecette, IValidator<CreateQuantiteIngredientsDTO> validator, [FromBody] CreateQuantiteIngredientsDTO createQuantiteIngredientsDTO)
         {
-            idIngredient = createQuantiteIngredientsDTO.id_ingredient;
-            idRecette = createQuantiteIngredientsDTO.id_recette;
-
             validator.ValidateAndThrow(createQuantiteIngredientsDTO);
 
             QuantiteIngredients newQuantiteIngredients = new()
@@ -91,6 +92,7 @@ namespace DelicesDuJour_ApiRest.Controllers
             return Ok(response);
         }
 
+        [Authorize(Roles = "Administrateur")]
         [HttpPut(nameof(UpdateRecetteIngredientRelationship) + "/{idIngredient}/{idRecette}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -120,6 +122,7 @@ namespace DelicesDuJour_ApiRest.Controllers
             return Ok(response);
         }
 
+        [Authorize(Roles = "Administrateur")]
         [HttpDelete(nameof(RemoveRecetteIngredientRelationship) + "/{idIngredient}/{idRecette}")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -132,6 +135,7 @@ namespace DelicesDuJour_ApiRest.Controllers
             return success ? NoContent() : NotFound();
         }
 
+        [Authorize(Roles = "Administrateur, Utilisateur")]
         [HttpGet(nameof(GetRecettesByIdIngredient) + "/{idIngredient}")]
         public async Task<IActionResult> GetRecettesByIdIngredient([FromRoute] int idIngredient)
         {
@@ -139,6 +143,7 @@ namespace DelicesDuJour_ApiRest.Controllers
             return Ok(response);
         }
 
+        [Authorize(Roles = "Administrateur, Utilisateur")]
         [HttpGet(nameof(GetIngredientsByIdRecette) + "/{idRecette}")]
         public async Task<IActionResult> GetIngredientsByIdRecette([FromRoute] int idRecette)
         {
@@ -147,6 +152,7 @@ namespace DelicesDuJour_ApiRest.Controllers
             return Ok(response);
         }
 
+        [Authorize(Roles = "Administrateur")]
         [HttpDelete(nameof(DeleteRecetteRelationsIngredient) + "/{idRecette}")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -156,6 +162,7 @@ namespace DelicesDuJour_ApiRest.Controllers
             return success ? NoContent() : NotFound();
         }
 
+        [Authorize(Roles = "Administrateur")]
         [HttpDelete(nameof(DeleteIngredientRelations) + "/{idIngredient}")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]

@@ -10,7 +10,6 @@ namespace DelicesDuJour_ApiRest.Domain.BO
         [DataType(DataType.Time)]
         public TimeSpan temps_preparation { get; set; }
 
-
         [DataType(DataType.Time)]
         public TimeSpan temps_cuisson { get; set; }
 
@@ -18,11 +17,11 @@ namespace DelicesDuJour_ApiRest.Domain.BO
         public int difficulte { get; set; }
         public List<Etape>? etapes { get; set; } = new List<Etape>();
         public List<Ingredient>? ingredients { get; set; } = new List<Ingredient>();
-        //public List<Avis>? avis { get; set; } = new List<Avis>();
+        
         public List<Categorie> categories { get; set; } = new List<Categorie>();
-        //public List<int> categorie_ids { get; set; } = new List<int>();
-        //public string? photo { get; set; }
+
+        public string? photo { get; set; }
         //public IFormFile photoFile { get; set; }
-        //public int? id_utilisateur { get; set; }
+
     }
 }

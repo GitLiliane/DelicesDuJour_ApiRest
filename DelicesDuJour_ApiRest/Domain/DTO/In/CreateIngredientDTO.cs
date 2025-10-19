@@ -17,6 +17,7 @@ namespace DelicesDuJour_ApiRest.Domain.DTO.In
             //ClassLevelCascadeMode = CascadeMode.Stop;
 
             RuleFor(e => e.nom).NotNull().NotEmpty().WithMessage("Le nom est obligatoire.");
+            RuleFor(e => e.quantite).NotNull().NotEmpty().WithMessage("La quantité d'ingrédient est obligatoire.");
 
         }
     }

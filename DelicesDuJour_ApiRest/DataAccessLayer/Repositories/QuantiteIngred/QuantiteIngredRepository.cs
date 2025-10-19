@@ -23,7 +23,7 @@ namespace DelicesDuJour_ApiRest.DataAccessLayer.Repositories.QuantiteIngred
 
         public async Task<IEnumerable<QuantiteIngredients>> GetAllAsync()
         {
-            string query = $"SELECT * FROM {RECETTE_INGREDIENT_TABLE}";
+            string query = $"SELECT * FROM {RECETTE_INGREDIENT_TABLE} ORDER BY id_recette ASC";
             return await _dbSession.Connection.QueryAsync<QuantiteIngredients>(query, transaction: _dbSession.Transaction);
         }
 
@@ -57,13 +57,13 @@ namespace DelicesDuJour_ApiRest.DataAccessLayer.Repositories.QuantiteIngred
 
         public async Task<IEnumerable<Recette>> GetRecettesByIdIngredientAsync(int idIngredient)
         {
-            string query = $"SELECT r.* FROM {RECETTE_TABLE} r JOIN {RECETTE_INGREDIENT_TABLE} ri ON r.id = ri.id_recette WHERE ri.id_ingredient = @idIngredient";
+            string query = $"SELECT r.* FROM {RECETTE_TABLE} r JOIN {RECETTE_INGREDIENT_TABLE} ri ON r.id = ri.id_recette WHERE ri.id_ingredient = @idIngredient ORDER BY ri.id_recette, ri.id_ingredient";
             return await _dbSession.Connection.QueryAsync<Recette>(query, new { idIngredient }, transaction: _dbSession.Transaction);
         }
 
         public async Task<IEnumerable<QuantiteIngredients>> GetIngredientsByIdRecetteAsync(int idRecette)
         {
-            string query = $"SELECT * FROM {INGREDIENT_TABLE} i JOIN {RECETTE_INGREDIENT_TABLE} ri ON i.id = ri.id_ingredient WHERE ri.id_recette = @idRecette";
+            string query = $"SELECT * FROM {INGREDIENT_TABLE} i JOIN {RECETTE_INGREDIENT_TABLE} ri ON i.id = ri.id_ingredient WHERE ri.id_recette = @idRecette ORDER BY ri.id_ingredient";
             return await _dbSession.Connection.QueryAsync<QuantiteIngredients>(query, new { idRecette }, transaction: _dbSession.Transaction);
         }
 

@@ -19,7 +19,7 @@ namespace DelicesDuJour_ApiRest.DataAccessLayer.Repositories.Ingredients
 
         public async Task<IEnumerable<Ingredient>> GetAllAsync()
         {
-            string query = $"SELECT * FROM {INGREDIENT_TABLE}";
+            string query = $"SELECT * FROM {INGREDIENT_TABLE} ORDER BY nom ASC";
             return await _dbSession.Connection.QueryAsync<Ingredient>(query, transaction: _dbSession.Transaction);
         }
 
@@ -59,7 +59,7 @@ namespace DelicesDuJour_ApiRest.DataAccessLayer.Repositories.Ingredients
 
         public async Task<IEnumerable<Ingredient>> GetIngredientsByIdRecetteAsync(int idRecette)
         {
-            string query = $"SELECT * FROM {INGREDIENT_TABLE} i JOIN {RECETTE_INGREDIENT_TABLE} ri ON i.id = ri.id_ingredient WHERE ri.id_recette = @idRecette";
+            string query = $"SELECT * FROM {INGREDIENT_TABLE} i JOIN {RECETTE_INGREDIENT_TABLE} ri ON i.id = ri.id_ingredient WHERE ri.id_recette = @idRecette ORDER BY i.nom ASC";
             return await _dbSession.Connection.QueryAsync<Ingredient>(query, new { idRecette }, transaction: _dbSession.Transaction);
         }
 

@@ -12,7 +12,6 @@ namespace DelicesDuJour_ApiRest.Domain.DTO.Out
         [DataType(DataType.Time)]
         public TimeSpan temps_preparation { get; set; }
 
-
         [DataType(DataType.Time)]
         public TimeSpan temps_cuisson { get; set; }
 
@@ -22,9 +21,9 @@ namespace DelicesDuJour_ApiRest.Domain.DTO.Out
         public List<IngredientDTO>? ingredients { get; set; } = new List<IngredientDTO>();
 
         public List<CategorieDTO> categories { get; set; } = new List<CategorieDTO>();
-        //public List<int>? categorie_ids { get; set; } = new List<int>();
-        //public string? photo { get; set; }
+
+        public string? photo { get; set; }
         ////public IFormFile? photoFile { get; set; }
-       
+
     }
 }

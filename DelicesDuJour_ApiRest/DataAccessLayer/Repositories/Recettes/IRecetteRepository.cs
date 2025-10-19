@@ -7,7 +7,7 @@ namespace DelicesDuJour_ApiRest.DataAccessLayer.Repositories.Recettes
     public interface IRecetteRepository : IGenericReadRepository<int, Recette>, IGenericWriteRepository<int, Recette>
     {
         // Ajouter ici des méthodes spécifiques au repository Book si nécessaire
-
+       
         #region Relation Recette catégorie
         Task<IEnumerable<RecetteCategorieRelationship>> GetAllRecetteCategorieRelationshipAsync();
         Task<bool> AddRecetteCategorieRelationshipAsync(int idCategorie, int idRecette);

@@ -3,6 +3,7 @@ using DelicesDuJour_ApiRest.Domain.DTO.In;
 using DelicesDuJour_ApiRest.Domain.DTO.Out;
 using DelicesDuJour_ApiRest.Services;
 using FluentValidation;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -19,6 +20,7 @@ namespace DelicesDuJour_ApiRest.Controllers
             _biblioService = biblioService;
         }
 
+        [Authorize(Roles = "Administrateur, Utilisateur")]
         [HttpGet()]
         [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<IActionResult> GetIngredients()
@@ -34,6 +36,7 @@ namespace DelicesDuJour_ApiRest.Controllers
             return Ok(response);
         }
 
+        [Authorize(Roles = "Administrateur, Utilisateur")]
         [HttpGet("{id}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -53,6 +56,7 @@ namespace DelicesDuJour_ApiRest.Controllers
             return Ok(response);
         }
 
+        [Authorize(Roles = "Administrateur")]
         [HttpPost()]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -79,6 +83,7 @@ namespace DelicesDuJour_ApiRest.Controllers
             return CreatedAtAction(nameof(GetIngredientById), new { id = response.id }, response);
         }
 
+        [Authorize(Roles = "Administrateur")]
         [HttpPut("{id}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -106,6 +111,7 @@ namespace DelicesDuJour_ApiRest.Controllers
             return Ok(response);
         }
 
+        [Authorize(Roles = "Administrateur")]
         [HttpDelete("{id}")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]

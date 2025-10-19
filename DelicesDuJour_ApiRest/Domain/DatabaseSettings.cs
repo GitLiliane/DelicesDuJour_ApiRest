@@ -18,6 +18,7 @@ namespace DelicesDuJour_ApiRest.Domain
     {
         public string ConnectionString { get; set; }
         public DatabaseProviderName? DatabaseProviderName { get; set; }
+
     }
 
     public class DatabaseSettingsValidator : AbstractValidator<DatabaseSettings>

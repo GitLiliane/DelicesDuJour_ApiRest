@@ -1,4 +1,5 @@
 ﻿using DelicesDuJour_ApiRest.Domain.BO;
+using DelicesDuJour_ApiRest.Domain.DTO.Out;
 using FluentValidation;
 using System;
 using System.ComponentModel.DataAnnotations;
@@ -7,11 +8,11 @@ namespace DelicesDuJour_ApiRest.Domain.DTO.In
 {
     public class UpdateRecetteDTO
     {
+        public int Id { get; set; }
         public string nom { get; set; }
 
         [DataType(DataType.Time)]
         public TimeSpan temps_preparation { get; set; }
-
 
         [DataType(DataType.Time)]
         public TimeSpan temps_cuisson { get; set; }
@@ -19,9 +20,9 @@ namespace DelicesDuJour_ApiRest.Domain.DTO.In
         [Range(1, 3)]
         public int difficulte { get; set; }
         public List<UpdateEtapeDTO>? etapes { get; set; } = new List<UpdateEtapeDTO>();
-        public List<Ingredient>? ingredients { get; set; } = new List<Ingredient>();
-        //public List<Categorie> categories { get; set; } = new List<Categorie>();
-        //public string? photo { get; set; }
+        public List<IngredientDTO>? ingredients { get; set; } = new List<IngredientDTO>();
+        public List<CategorieDTO> categories { get; set; } = new List<CategorieDTO>();
+        public string? photo { get; set; }
         //public IFormFile photoFile { get; set; }
 
     }

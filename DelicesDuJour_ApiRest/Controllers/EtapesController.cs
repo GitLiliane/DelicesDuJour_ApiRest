@@ -3,6 +3,7 @@ using DelicesDuJour_ApiRest.Domain.DTO.In;
 using DelicesDuJour_ApiRest.Domain.DTO.Out;
 using DelicesDuJour_ApiRest.Services;
 using FluentValidation;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Org.BouncyCastle.Asn1.Ocsp;
 using static Mysqlx.Expect.Open.Types.Condition.Types;
@@ -10,6 +11,7 @@ using static Mysqlx.Expect.Open.Types.Condition.Types;
 
 namespace DelicesDuJour_ApiRest.Controllers
 {
+    [Authorize(Roles = "Administrateur, Utilisateur")]
     [Route("api/[controller]")]
     [ApiController]
     public class EtapesController : ControllerBase
@@ -29,9 +31,6 @@ namespace DelicesDuJour_ApiRest.Controllers
 
             IEnumerable<EtapeDTO> etapeDTOs = etapes.Select(e => new EtapeDTO()
             {
-                // Assigner la propriété Key en créant une nouvelle instance de TupleDTO
-                // 'e.Key.t' représente la première partie de votre clé (par ex. id_recette)
-                // 'e.Key.v' représente la deuxième partie (par ex. numero)
                 id_recette = e.id_recette,
                 numero = e.numero,
                 titre = e.titre,
@@ -45,18 +44,14 @@ namespace DelicesDuJour_ApiRest.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> GetEtapeByIdRecette([FromRoute] int id_recette)
-        {            
+        {
             var etapes = await _biblioservice.GetEtapesByIdRecetteAsync(id_recette);
 
             if (etapes is null)
                 return NotFound();
 
-
             IEnumerable<EtapeDTO> etapeDTOs = etapes.Select(e => new EtapeDTO()
             {
-                // Assigner la propriété Key en créant une nouvelle instance de TupleDTO
-                // 'e.Key.t' représente la première partie de votre clé (par ex. id_recette)
-                // 'e.Key.v' représente la deuxième partie (par ex. numero)
                 id_recette = e.id_recette,
                 numero = e.numero,
                 titre = e.titre,
@@ -66,22 +61,20 @@ namespace DelicesDuJour_ApiRest.Controllers
             return Ok(etapeDTOs);
         }
 
-        
+
         [HttpPost("{id_recette}")]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
 
-        public async Task<IActionResult> CreateEtape(IValidator<CreateEtapeDTO> validator, [FromBody] CreateEtapeDTO request)
+        public async Task<IActionResult> CreateEtape(IValidator<CreateEtapeDTO> validator, [FromBody] CreateEtapeDTO request,
+          [FromRoute(Name ="id_recette")] int id_recette)
         {
             validator.ValidateAndThrow(request);
 
             Etape etape = new()
             {
-                //Key = new TupleClass<int, int>
-                //{
-                //    t = request.Key.t,
-                //    v = request.Key.v
-                //},
+                id_recette = id_recette,
+                numero = request.numero,
                 titre = request.titre,
                 texte = request.texte
             };
@@ -93,17 +86,13 @@ namespace DelicesDuJour_ApiRest.Controllers
 
             EtapeDTO newEtapeDTO = new()
             {
-                //Key = new TupleDTO<int, int>
-                //{
-                //    t = etape.Key.t,
-                //    v = etape.Key.v
-                //},
-                titre = etape.titre,
-                texte = etape.texte
+                id_recette = id_recette, 
+                numero = request.numero,
+                titre = request.titre,
+                texte = request.texte
             };
 
-            return null;  /*CreatedAtAction(nameof(GetEtapeById), new { id_recette = newEtapeDTO.Key.t, numero = newEtapeDTO.Key.v }, newEtapeDTO);*/
-
+            return CreatedAtAction(nameof(GetEtapeByIdRecette), new { id_recette = id_recette }, newEtapeDTO);
         }
 
         [HttpPut("{id_recette}/{numero}")]
@@ -115,11 +104,8 @@ namespace DelicesDuJour_ApiRest.Controllers
 
             Etape updateE = new()
             {
-                //Key = new TupleClass<int, int>
-                //{
-                //    t = id_recette,
-                //    v = numero
-                //},
+                id_recette = id_recette,
+                numero = numero,
                 titre = updateEtapeDTO.titre,
                 texte = updateEtapeDTO.texte
             };
@@ -131,27 +117,24 @@ namespace DelicesDuJour_ApiRest.Controllers
 
             EtapeDTO etapeDTO = new()
             {
-                //Key = new TupleDTO<int, int>
-                //{
-                //    t = updateEtape.Key.t,
-                //    v = updateEtape.Key.v
-                //},
-                titre = updateEtapeDTO.titre,
-                texte = updateEtapeDTO.texte
+                id_recette = updateEtape.id_recette,
+                numero = updateEtape.numero,
+                titre = updateEtape.titre,
+                texte = updateEtape.texte
             };
 
-            return Ok(etapeDTO);     
-
+            return Ok(etapeDTO);
         }
 
         [HttpDelete("{id_recette}/{numero}")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
 
-        public async Task<IActionResult> DeleteEtape(int id_recette, int numero)
+        public async Task<IActionResult> DeleteEtape([FromRoute] int id_recette, [FromRoute] int numero)
         {
-            //var key = new TupleClass<int, int>((id_recette, numero));
-            var sucess = await _biblioservice.DeleteEtapeAsync(id_recette);
+            (int, int) key = new();
+            key = (id_recette, numero);
+            var sucess = await _biblioservice.DeleteEtapeAsync(key);
 
             return sucess ? NoContent() : NotFound();
         }
