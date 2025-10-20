@@ -3,7 +3,7 @@
 namespace DelicesDuJour_ApiRest.Domain.DTO.In
 {
     /// <summary>
-    /// DTO utilisé pour la connexion d'un utilisateur.
+    /// Data Transfer Object (DTO) utilisé pour la connexion d'un utilisateur.
     /// </summary>
     public class LoginDTO
     {
@@ -28,10 +28,12 @@ namespace DelicesDuJour_ApiRest.Domain.DTO.In
         /// </summary>
         public LoginDTOValidator()
         {
+            // Validation du nom d'utilisateur : obligatoire et longueur minimale de 3 caractères
             RuleFor(x => x.Username)
                 .NotEmpty().WithMessage("Le nom d'utilisateur est requis.")
                 .MinimumLength(3).WithMessage("Le nom d'utilisateur doit contenir au moins 3 caractères.");
 
+            // Validation du mot de passe : obligatoire et longueur minimale de 4 caractères
             RuleFor(x => x.Password)
                 .NotEmpty().WithMessage("Le mot de passe est requis.")
                 .MinimumLength(4).WithMessage("Le mot de passe doit contenir au moins 4 caractères.");
