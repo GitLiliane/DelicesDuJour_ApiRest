@@ -1,6 +1,6 @@
 ﻿using FluentValidation;
 
-namespace DelicesDuJour_ApiRest.Domain.DTO.In
+namespace DelicesDuJour_ApiRest.Domain.DTO.DTOIn
 {
     /// <summary>
     /// Data Transfer Object (DTO) utilisé pour créer ou associer un ingrédient à une recette avec sa quantité.

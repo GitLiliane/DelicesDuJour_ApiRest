@@ -1,17 +1,13 @@
-﻿using FluentValidation;
+﻿using DelicesDuJour_ApiRest.Domain.DTO.DTOOut;
+using FluentValidation;
 
-namespace DelicesDuJour_ApiRest.Domain.DTO.In
+namespace DelicesDuJour_ApiRest.Domain.DTO.DTOIn
 {
     /// <summary>
-    /// Data Transfer Object (DTO) utilisé pour mettre à jour une étape d'une recette.
+    /// Data Transfer Object (DTO) utilisé pour créer une nouvelle étape d'une recette.
     /// </summary>
-    public class UpdateEtapeDTO
+    public class CreateEtapeDTO
     {
-        /// <summary>
-        /// Identifiant de la recette à laquelle l'étape appartient.
-        /// </summary>
-        public int id_recette { get; set; }
-
         /// <summary>
         /// Numéro de l'étape dans la séquence de la recette.
         /// </summary>
@@ -29,14 +25,14 @@ namespace DelicesDuJour_ApiRest.Domain.DTO.In
     }
 
     /// <summary>
-    /// Définit les règles de validation pour la classe <see cref="UpdateEtapeDTO"/>.
+    /// Définit les règles de validation pour la classe <see cref="CreateEtapeDTO"/>.
     /// </summary>
-    public class UpdateEtapeDTOValidator : AbstractValidator<UpdateEtapeDTO>
+    public class CreateEtapeDTOValidator : AbstractValidator<CreateEtapeDTO>
     {
         /// <summary>
-        /// Initialise une nouvelle instance de <see cref="UpdateEtapeDTOValidator"/> et configure les règles de validation.
+        /// Initialise une nouvelle instance de <see cref="CreateEtapeDTOValidator"/> et configure les règles de validation.
         /// </summary>
-        public UpdateEtapeDTOValidator()
+        public CreateEtapeDTOValidator()
         {
             // Validation du numéro de l'étape : obligatoire
             RuleFor(e => e.numero)

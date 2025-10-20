@@ -1,4 +1,4 @@
-﻿namespace DelicesDuJour_ApiRest.Domain.DTO.Out
+﻿namespace DelicesDuJour_ApiRest.Domain.DTO.DTOOut
 {
     /// <summary>
     /// Data Transfer Object (DTO) représentant un token JWT.

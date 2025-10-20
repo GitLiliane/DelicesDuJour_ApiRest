@@ -1,4 +1,4 @@
-﻿using DelicesDuJour_ApiRest.Domain.DTO.Out;
+﻿using DelicesDuJour_ApiRest.Domain.DTO.DTOOut;
 using DelicesDuJour_ApiRest.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;

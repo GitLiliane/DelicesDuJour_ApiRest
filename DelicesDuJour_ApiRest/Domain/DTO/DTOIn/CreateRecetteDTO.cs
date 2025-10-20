@@ -1,22 +1,17 @@
 ﻿using DelicesDuJour_ApiRest.Domain.BO;
-using DelicesDuJour_ApiRest.Domain.DTO.Out;
+using DelicesDuJour_ApiRest.Domain.DTO.DTOOut;
 using FluentValidation;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
-namespace DelicesDuJour_ApiRest.Domain.DTO.In
+namespace DelicesDuJour_ApiRest.Domain.DTO.DTOIn
 {
     /// <summary>
-    /// Data Transfer Object (DTO) utilisé pour mettre à jour une recette.
+    /// Data Transfer Object (DTO) utilisé pour créer une nouvelle recette.
     /// </summary>
-    public class UpdateRecetteDTO
+    public class CreateRecetteDTO
     {
-        /// <summary>
-        /// Identifiant unique de la recette à mettre à jour.
-        /// </summary>
-        public int Id { get; set; }
-
         /// <summary>
         /// Nom de la recette.
         /// </summary>
@@ -37,16 +32,15 @@ namespace DelicesDuJour_ApiRest.Domain.DTO.In
         /// <summary>
         /// Niveau de difficulté de la recette (1 à 3).
         /// </summary>
-        [Range(1, 3)]
         public int difficulte { get; set; }
 
         /// <summary>
-        /// Liste des étapes mises à jour de la recette.
+        /// Liste des étapes de la recette à créer.
         /// </summary>
-        public List<UpdateEtapeDTO>? etapes { get; set; } = new List<UpdateEtapeDTO>();
+        public List<CreateEtapeDTO>? etapes { get; set; } = new List<CreateEtapeDTO>();
 
         /// <summary>
-        /// Liste des ingrédients mis à jour de la recette.
+        /// Liste des ingrédients de la recette à créer.
         /// </summary>
         public List<IngredientDTO>? ingredients { get; set; } = new List<IngredientDTO>();
 
@@ -67,14 +61,14 @@ namespace DelicesDuJour_ApiRest.Domain.DTO.In
     }
 
     /// <summary>
-    /// Définit les règles de validation pour la classe <see cref="UpdateRecetteDTO"/>.
+    /// Définit les règles de validation pour la classe <see cref="CreateRecetteDTO"/>.
     /// </summary>
-    public class UpdateRecetteDTOValidator : AbstractValidator<UpdateRecetteDTO>
+    public class CreateRecetteDTOValidator : AbstractValidator<CreateRecetteDTO>
     {
         /// <summary>
-        /// Initialise une nouvelle instance de <see cref="UpdateRecetteDTOValidator"/> et configure les règles de validation.
+        /// Initialise une nouvelle instance de <see cref="CreateRecetteDTOValidator"/> et configure les règles de validation.
         /// </summary>
-        public UpdateRecetteDTOValidator()
+        public CreateRecetteDTOValidator()
         {
             // Validation du nom de la recette : obligatoire
             RuleFor(r => r.nom)
@@ -82,17 +76,27 @@ namespace DelicesDuJour_ApiRest.Domain.DTO.In
                 .NotEmpty()
                 .WithMessage("Le nom est obligatoire.");
 
+            // Validation du temps de préparation : obligatoire
+            RuleFor(r => r.temps_preparation)
+                .NotNull()
+                .NotEmpty()
+                .WithMessage("Le temps de préparation est obligatoire.");
+
+            // Validation du temps de cuisson : obligatoire
+            RuleFor(r => r.temps_cuisson)
+                .NotNull()
+                .NotEmpty()
+                .WithMessage("Le temps de cuisson est obligatoire.");
+
             // Validation du niveau de difficulté : obligatoire
             RuleFor(r => r.difficulte)
                 .NotNull()
                 .NotEmpty()
                 .WithMessage("Le niveau de difficulté est obligatoire.");
 
-            // Les validations suivantes sont commentées, mais peuvent être activées si nécessaire
-            RuleFor(r => r.etapes).NotNull().NotEmpty().WithMessage("Les étapes sont obligatoires.");
-            RuleFor(r => r.ingredients).NotNull().NotEmpty().WithMessage("Les ingrédients sont obligatoires.");
-            RuleFor(r => r.categories).NotNull().NotEmpty().WithMessage("Le choix de catégorie(s) est obligatoire.");
-            // RuleFor(r => r.photo).NotNull().NotEmpty().WithMessage("Une image est requise.");
+            // Les paramètres de cascade de validation sont commentés mais peuvent être activés si nécessaire
+            // RuleLevelCascadeMode = CascadeMode.Stop;
+            // ClassLevelCascadeMode = CascadeMode.Stop;
         }
     }
 }

@@ -1,6 +1,6 @@
 ﻿using DelicesDuJour_ApiRest.Domain.BO;
-using DelicesDuJour_ApiRest.Domain.DTO.In;
-using DelicesDuJour_ApiRest.Domain.DTO.Out;
+using DelicesDuJour_ApiRest.Domain.DTO.DTOIn;
+using DelicesDuJour_ApiRest.Domain.DTO.DTOOut;
 using DelicesDuJour_ApiRest.Services;
 using FluentValidation;
 using Microsoft.AspNetCore.Authorization;

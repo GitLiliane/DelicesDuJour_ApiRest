@@ -2,8 +2,8 @@
 using DelicesDuJour_ApiRest.DataAccessLayer.Repositories.Recettes;
 using DelicesDuJour_ApiRest.DataAccessLayer.Unit_of_Work;
 using DelicesDuJour_ApiRest.Domain.BO;
-using DelicesDuJour_ApiRest.Domain.DTO.In;
-using DelicesDuJour_ApiRest.Domain.DTO.Out;
+using DelicesDuJour_ApiRest.Domain.DTO.DTOIn;
+using DelicesDuJour_ApiRest.Domain.DTO.DTOOut;
 using MySqlX.XDevAPI.Common;
 using Org.BouncyCastle.Tls;
 using System.Diagnostics.Eventing.Reader;

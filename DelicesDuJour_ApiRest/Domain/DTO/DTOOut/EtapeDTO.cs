@@ -1,6 +1,6 @@
 ﻿using DelicesDuJour_ApiRest.Domain.BO;
 
-namespace DelicesDuJour_ApiRest.Domain.DTO.Out
+namespace DelicesDuJour_ApiRest.Domain.DTO.DTOOut
 {
     /// <summary>
     /// Data Transfer Object (DTO) représentant une étape d'une recette.

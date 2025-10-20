@@ -2,7 +2,7 @@
 using DelicesDuJour_ApiRest.DataAccessLayer.Session;
 using DelicesDuJour_ApiRest.Domain;
 using DelicesDuJour_ApiRest.Domain.BO;
-using DelicesDuJour_ApiRest.Domain.DTO.In;
+using DelicesDuJour_ApiRest.Domain.DTO.DTOIn;
 using Mysqlx.Crud;
 using MySqlX.XDevAPI.Common;
 using System.Diagnostics.Eventing.Reader;

@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
-namespace DelicesDuJour_ApiRest.Domain.DTO.Out
+namespace DelicesDuJour_ApiRest.Domain.DTO.DTOOut
 {
     /// <summary>
     /// Data Transfer Object (DTO) représentant une recette à envoyer côté client.

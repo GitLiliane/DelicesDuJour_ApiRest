@@ -1,6 +1,6 @@
 ﻿using FluentValidation;
 
-namespace DelicesDuJour_ApiRest.Domain.DTO.In
+namespace DelicesDuJour_ApiRest.Domain.DTO.DTOIn
 {
     /// <summary>
     /// Data Transfer Object (DTO) utilisé pour la connexion d'un utilisateur.

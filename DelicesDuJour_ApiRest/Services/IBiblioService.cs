@@ -1,6 +1,6 @@
 ﻿using DelicesDuJour_ApiRest.Domain.BO;
-using DelicesDuJour_ApiRest.Domain.DTO.In;
-using DelicesDuJour_ApiRest.Domain.DTO.Out;
+using DelicesDuJour_ApiRest.Domain.DTO.DTOIn;
+using DelicesDuJour_ApiRest.Domain.DTO.DTOOut;
 using static Mysqlx.Expect.Open.Types.Condition.Types;
 
 namespace DelicesDuJour_ApiRest.Services
