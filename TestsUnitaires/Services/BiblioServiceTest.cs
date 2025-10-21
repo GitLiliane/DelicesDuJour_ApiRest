@@ -686,39 +686,39 @@ public class BiblioServiceTest
         private readonly FakeQuantiteIngredientsRepository _quantiteIngred;
 
         public FakeUoW(
-            IEnumerable<Recette>? getAllRecettesResult = null,
-            Recette? getRecetteByIdResult = null,
-            Recette? createRecetteResult = null,
-            Recette? modifyRecetteResult = null,
+            IEnumerable<Recette> getAllRecettesResult = null,
+            Recette getRecetteByIdResult = null,
+            Recette createRecetteResult = null,
+            Recette modifyRecetteResult = null,
             bool? deleteRecetteResult = null,
-            IEnumerable<Etape>? getAllEtapesResult = null,
-            IEnumerable<Etape>? getEtapesByIdRecetteResult = null,
-            Etape? createEtapeResult = null,
-            Etape? modifyEtapeResult = null,
+            IEnumerable<Etape> getAllEtapesResult = null,
+            IEnumerable<Etape> getEtapesByIdRecetteResult = null,
+            Etape createEtapeResult = null,
+            Etape modifyEtapeResult = null,
             bool? deleteEtapeResult = null,
             bool? deleteEtapesRelationByIdRecetteResult = null,
-            IEnumerable<Categorie>? getAllCategoriesResult = null,
-            Categorie? getCategorieByIdResult = null,
-            Categorie? createCategorieResult = null,
-            Categorie? modifyCategorieResult = null,
+            IEnumerable<Categorie> getAllCategoriesResult = null,
+            Categorie getCategorieByIdResult = null,
+            Categorie createCategorieResult = null,
+            Categorie modifyCategorieResult = null,
             bool? deleteCategorieResult = null,
             bool? hasRecetteRelationsResult = null,
-            IEnumerable<Ingredient>? getAllIngredientsResult = null,
-            Ingredient? getIngredientByIdResult = null,
-            Ingredient? createIngredientResult = null,
-            Ingredient? modifyIngredientResult = null,
+            IEnumerable<Ingredient> getAllIngredientsResult = null,
+            Ingredient getIngredientByIdResult = null,
+            Ingredient createIngredientResult = null,
+            Ingredient modifyIngredientResult = null,
             bool? deleteIngredientResult = null,
-            IEnumerable<Ingredient>? getIngredientsByIdRecetteResult = null,
-            IEnumerable<Categorie>? getCategoriesByIdRecetteResult = null,
-            IEnumerable<QuantiteIngredients>? getAllQuantiteIngredientsResult = null,
-            QuantiteIngredients? createQuantiteIngredientResult = null,
-            IEnumerable<QuantiteIngredients>? getIngredientsByIdRecetteQuantiteResult = null,
+            IEnumerable<Ingredient> getIngredientsByIdRecetteResult = null,
+            IEnumerable<Categorie> getCategoriesByIdRecetteResult = null,
+            IEnumerable<QuantiteIngredients> getAllQuantiteIngredientsResult = null,
+            QuantiteIngredients createQuantiteIngredientResult = null,
+            IEnumerable<QuantiteIngredients> getIngredientsByIdRecetteQuantiteResult = null,
             bool? deleteRecetteRelationsIngredientResult = null,
             bool? deleteRecetteRelationsResult = null,
             bool? addRecetteCategorieRelationshipResult = null,
             bool? removeRecetteCategorieRelationshipResult = null,
-            IEnumerable<Recette>? getRecettesByIdCategorieResult = null,
-            IEnumerable<RecetteCategorieRelationship>? getAllRecetteCategorieRelationshipResult = null)
+            IEnumerable<Recette> getRecettesByIdCategorieResult = null,
+            IEnumerable<RecetteCategorieRelationship> getAllRecetteCategorieRelationshipResult = null)
         {
             _recettes = new FakeRecettesRepository(
                 getAllRecettesResult,
@@ -780,28 +780,28 @@ public class BiblioServiceTest
 
     private class FakeRecettesRepository : IRecetteRepository
     {
-        private readonly IEnumerable<Recette>? _getAllResult;
-        private readonly Recette? _getResult;
-        private readonly Recette? _createResult;
-        private readonly Recette? _modifyResult;
+        private readonly IEnumerable<Recette> _getAllResult;
+        private readonly Recette _getResult;
+        private readonly Recette _createResult;
+        private readonly Recette _modifyResult;
         private readonly bool? _deleteResult;
         private readonly bool? _deleteRelationsResult;
         private readonly bool? _addRelationshipResult;
         private readonly bool? _removeRelationshipResult;
-        private readonly IEnumerable<Recette>? _getRecettesByIdCategorieResult;
-        private readonly IEnumerable<RecetteCategorieRelationship>? _getAllRelationshipResult;
+        private readonly IEnumerable<Recette> _getRecettesByIdCategorieResult;
+        private readonly IEnumerable<RecetteCategorieRelationship> _getAllRelationshipResult;
 
         public FakeRecettesRepository(
-            IEnumerable<Recette>? getAllResult,
-            Recette? getResult,
-            Recette? createResult,
-            Recette? modifyResult,
+            IEnumerable<Recette> getAllResult,
+            Recette getResult,
+            Recette createResult,
+            Recette modifyResult,
             bool? deleteResult,
             bool? deleteRelationsResult,
             bool? addRelationshipResult,
             bool? removeRelationshipResult,
-            IEnumerable<Recette>? getRecettesByIdCategorieResult,
-            IEnumerable<RecetteCategorieRelationship>? getAllRelationshipResult)
+            IEnumerable<Recette> getRecettesByIdCategorieResult,
+            IEnumerable<RecetteCategorieRelationship> getAllRelationshipResult)
         {
             _getAllResult = getAllResult;
             _getResult = getResult;
@@ -829,18 +829,18 @@ public class BiblioServiceTest
 
     private class FakeEtapesRepository : IEtapeRepository
     {
-        private readonly IEnumerable<Etape>? _getAllResult;
-        private readonly IEnumerable<Etape>? _getByIdRecetteResult;
-        private readonly Etape? _createResult;
-        private readonly Etape? _modifyResult;
+        private readonly IEnumerable<Etape> _getAllResult;
+        private readonly IEnumerable<Etape> _getByIdRecetteResult;
+        private readonly Etape _createResult;
+        private readonly Etape _modifyResult;
         private readonly bool? _deleteResult;
         private readonly bool? _deleteRelationResult;
 
         public FakeEtapesRepository(
-            IEnumerable<Etape>? getAllResult,
-            IEnumerable<Etape>? getByIdRecetteResult,
-            Etape? createResult,
-            Etape? modifyResult,
+            IEnumerable<Etape> getAllResult,
+            IEnumerable<Etape> getByIdRecetteResult,
+            Etape createResult,
+            Etape modifyResult,
             bool? deleteResult,
             bool? deleteRelationResult)
         {
@@ -863,22 +863,22 @@ public class BiblioServiceTest
 
     private class FakeCategoriesRepository : ICategorieRepository
     {
-        private readonly IEnumerable<Categorie>? _getAllResult;
-        private readonly Categorie? _getResult;
-        private readonly Categorie? _createResult;
-        private readonly Categorie? _modifyResult;
+        private readonly IEnumerable<Categorie> _getAllResult;
+        private readonly Categorie _getResult;
+        private readonly Categorie _createResult;
+        private readonly Categorie _modifyResult;
         private readonly bool? _deleteResult;
         private readonly bool? _hasRelationsResult;
-        private readonly IEnumerable<Categorie>? _getCategoriesByIdRecetteResult;
+        private readonly IEnumerable<Categorie> _getCategoriesByIdRecetteResult;
 
         public FakeCategoriesRepository(
-            IEnumerable<Categorie>? getAllResult,
-            Categorie? getResult,
-            Categorie? createResult,
-            Categorie? modifyResult,
+            IEnumerable<Categorie> getAllResult,
+            Categorie getResult,
+            Categorie createResult,
+            Categorie modifyResult,
             bool? deleteResult,
             bool? hasRelationsResult,
-            IEnumerable<Categorie>? getCategoriesByIdRecetteResult)
+            IEnumerable<Categorie> getCategoriesByIdRecetteResult)
         {
             _getAllResult = getAllResult;
             _getResult = getResult;
@@ -901,20 +901,20 @@ public class BiblioServiceTest
 
     private class FakeIngredientsRepository : IIngredientRepository
     {
-        private readonly IEnumerable<Ingredient>? _getAllResult;
-        private readonly Ingredient? _getResult;
-        private readonly Ingredient? _createResult;
-        private readonly Ingredient? _modifyResult;
+        private readonly IEnumerable<Ingredient> _getAllResult;
+        private readonly Ingredient _getResult;
+        private readonly Ingredient _createResult;
+        private readonly Ingredient _modifyResult;
         private readonly bool? _deleteResult;
-        private readonly IEnumerable<Ingredient>? _getByIdRecetteResult;
+        private readonly IEnumerable<Ingredient> _getByIdRecetteResult;
 
         public FakeIngredientsRepository(
-            IEnumerable<Ingredient>? getAllResult,
-            Ingredient? getResult,
-            Ingredient? createResult,
-            Ingredient? modifyResult,
+            IEnumerable<Ingredient> getAllResult,
+            Ingredient getResult,
+            Ingredient createResult,
+            Ingredient modifyResult,
             bool? deleteResult,
-            IEnumerable<Ingredient>? getByIdRecetteResult)
+            IEnumerable<Ingredient> getByIdRecetteResult)
         {
             _getAllResult = getAllResult;
             _getResult = getResult;
@@ -934,15 +934,15 @@ public class BiblioServiceTest
 
     private class FakeQuantiteIngredientsRepository : IQuantiteIngredRepository
     {
-        private readonly IEnumerable<QuantiteIngredients>? _getAllResult;
-        private readonly QuantiteIngredients? _createResult;
-        private readonly IEnumerable<QuantiteIngredients>? _getByIdRecetteResult;
+        private readonly IEnumerable<QuantiteIngredients> _getAllResult;
+        private readonly QuantiteIngredients _createResult;
+        private readonly IEnumerable<QuantiteIngredients> _getByIdRecetteResult;
         private readonly bool? _deleteRelationResult;
 
         public FakeQuantiteIngredientsRepository(
-            IEnumerable<QuantiteIngredients>? getAllResult,
-            QuantiteIngredients? createResult,
-            IEnumerable<QuantiteIngredients>? getByIdRecetteResult,
+            IEnumerable<QuantiteIngredients> getAllResult,
+            QuantiteIngredients createResult,
+            IEnumerable<QuantiteIngredients> getByIdRecetteResult,
             bool? deleteRelationResult)
         {
             _getAllResult = getAllResult;

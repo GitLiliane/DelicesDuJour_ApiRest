@@ -290,17 +290,17 @@ public class RecettesControllerTest
     // Minimal fake IBiblioService implementation for the tests with configurable results
     private class FakeBiblioService : IBiblioService
     {
-        private readonly IEnumerable<Recette>? _getAllRecettesResult;
-        private readonly Recette? _getRecetteByIdResult;
-        private readonly Recette? _addRecetteResult;
-        private readonly Recette? _modifyRecetteResult;
+        private readonly IEnumerable<Recette> _getAllRecettesResult;
+        private readonly Recette _getRecetteByIdResult;
+        private readonly Recette _addRecetteResult;
+        private readonly Recette _modifyRecetteResult;
         private readonly bool? _deleteRecetteResult;
 
         public FakeBiblioService(
-            IEnumerable<Recette>? getAllRecettesResult = null,
-            Recette? getRecetteByIdResult = null,
-            Recette? addRecetteResult = null,
-            Recette? modifyRecetteResult = null,
+            IEnumerable<Recette> getAllRecettesResult = null,
+            Recette getRecetteByIdResult = null,
+            Recette addRecetteResult = null,
+            Recette modifyRecetteResult = null,
             bool? deleteRecetteResult = null)
         {
             _getAllRecettesResult = getAllRecettesResult;
@@ -312,19 +312,19 @@ public class RecettesControllerTest
 
         public Task<IEnumerable<Recette>> GetAllRecettesAsync() => Task.FromResult(_getAllRecettesResult ?? Enumerable.Empty<Recette>());
         public Task<Recette> GetRecetteByIdAsync(int id) => Task.FromResult(_getRecetteByIdResult!);
-        public Task<Recette> AddRecetteAsync(Recette newRecette, IFormFile? photoFile) => Task.FromResult(_addRecetteResult!);
+        public Task<Recette> AddRecetteAsync(Recette newRecette, IFormFile photoFile) => Task.FromResult(_addRecetteResult!);
         public Task<Recette> ModifyRecetteAsync(Recette updateRecette) => Task.FromResult(_modifyRecetteResult!);
         public Task<bool> DeleteRecetteAsync(int id) => Task.FromResult(_deleteRecetteResult ?? true);
 
         public Task<IEnumerable<Etape>> GetAllEtapesAsync() => Task.FromResult(Enumerable.Empty<Etape>());
         public Task<IEnumerable<Etape>> GetEtapesByIdRecetteAsync(int id) => Task.FromResult(Enumerable.Empty<Etape>());
-        public Task<Etape> AddEtapeAsync(Etape newEtape) => Task.FromResult<Etape?>(null!);
-        public Task<Etape> ModifyEtapeAsync(Etape updateEtape) => Task.FromResult<Etape?>(null!);
+        public Task<Etape> AddEtapeAsync(Etape newEtape) => Task.FromResult<Etape>(null!);
+        public Task<Etape> ModifyEtapeAsync(Etape updateEtape) => Task.FromResult<Etape>(null!);
         public Task<bool> DeleteEtapeAsync((int, int) key) => Task.FromResult(true);
         public Task<IEnumerable<Categorie>> GetAllCategoriesAsync() => Task.FromResult(Enumerable.Empty<Categorie>());
-        public Task<Categorie> GetCategorieByIdAsync(int id) => Task.FromResult<Categorie?>(null!);
-        public Task<Categorie> AddCategorieAsync(Categorie newCategorie) => Task.FromResult<Categorie?>(null!);
-        public Task<Categorie> ModifyCategorieAsync(Categorie updateCategorie) => Task.FromResult<Categorie?>(null!);
+        public Task<Categorie> GetCategorieByIdAsync(int id) => Task.FromResult<Categorie>(null!);
+        public Task<Categorie> AddCategorieAsync(Categorie newCategorie) => Task.FromResult<Categorie>(null!);
+        public Task<Categorie> ModifyCategorieAsync(Categorie updateCategorie) => Task.FromResult<Categorie>(null!);
         public Task<bool> DeleteCategorieAsync(int id) => Task.FromResult(true);
         public Task<IEnumerable<RecetteCategorieRelationship>> GetAllRecettesCategoriesAsync() => Task.FromResult(Enumerable.Empty<RecetteCategorieRelationship>());
         public Task<bool> AddRecetteCategorieRelationshipAsync(int idCategorie, int idRecette) => Task.FromResult(true);
@@ -334,14 +334,14 @@ public class RecettesControllerTest
         public Task<bool> DeleteRecetteRelationsAsync(int idRecette) => Task.FromResult(true);
         public Task<bool> DeleteCategorieRelationsAsync(int idCategorie) => Task.FromResult(true);
         public Task<IEnumerable<Ingredient>> GetAllIngredientsAsync() => Task.FromResult(Enumerable.Empty<Ingredient>());
-        public Task<Ingredient> GetIngredientByIdAsync(int id) => Task.FromResult<Ingredient?>(null!);
-        public Task<Ingredient> AddIngredientAsync(Ingredient newIngredient) => Task.FromResult<Ingredient?>(null!);
-        public Task<Ingredient> ModifyIngredientAsync(Ingredient updateIngredient) => Task.FromResult<Ingredient?>(null!);
+        public Task<Ingredient> GetIngredientByIdAsync(int id) => Task.FromResult<Ingredient>(null!);
+        public Task<Ingredient> AddIngredientAsync(Ingredient newIngredient) => Task.FromResult<Ingredient>(null!);
+        public Task<Ingredient> ModifyIngredientAsync(Ingredient updateIngredient) => Task.FromResult<Ingredient>(null!);
         public Task<bool> DeleteIngredientAsync(int id) => Task.FromResult(true);
         public Task<IEnumerable<QuantiteIngredients>> GetQuantiteIngredientsAsync() => Task.FromResult(Enumerable.Empty<QuantiteIngredients>());
-        public Task<QuantiteIngredients> GetQuantiteIngredientsByIdAsync((int, int) key) => Task.FromResult<QuantiteIngredients?>(null!);
-        public Task<QuantiteIngredients> AddRecetteIngredientRelationshipAsync(QuantiteIngredients CreateRelationRI) => Task.FromResult<QuantiteIngredients?>(null!);
-        public Task<QuantiteIngredients> updateRecetteIngredientRelationshipAsync(QuantiteIngredients updateRelationRI) => Task.FromResult<QuantiteIngredients?>(null!);
+        public Task<QuantiteIngredients> GetQuantiteIngredientsByIdAsync((int, int) key) => Task.FromResult<QuantiteIngredients>(null!);
+        public Task<QuantiteIngredients> AddRecetteIngredientRelationshipAsync(QuantiteIngredients CreateRelationRI) => Task.FromResult<QuantiteIngredients>(null!);
+        public Task<QuantiteIngredients> updateRecetteIngredientRelationshipAsync(QuantiteIngredients updateRelationRI) => Task.FromResult<QuantiteIngredients>(null!);
         public Task<bool> RemoveRecetteIngredientRelationshipAsync((int, int) key) => Task.FromResult(true);
         public Task<IEnumerable<Recette>> GetRecettesByIdIngredientAsync(int idIngredient) => Task.FromResult(Enumerable.Empty<Recette>());
         public Task<IEnumerable<QuantiteIngredients>> GetIngredientsByIdRecetteAsync(int idRecette) => Task.FromResult(Enumerable.Empty<QuantiteIngredients>());
