@@ -17,45 +17,42 @@ namespace DelicesDuJour_ApiRest
 {
     /// <summary>
     /// Point d'entrée principal de l'application Web API.
-    /// Configure les services, l'injection de dépendances, l'authentification, la documentation Swagger et le pipeline HTTP.
+    /// Configure les services, la validation, l'authentification, la documentation Swagger et le pipeline HTTP.
     /// </summary>
     public class Program
     {
         /// <summary>
         /// Méthode principale de démarrage de l'application.
         /// </summary>
-        /// <param name="args">Arguments de la ligne de commande.</param>
+        /// <param name="args">Arguments passés à l'application lors du démarrage.</param>
         public static void Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
 
-            // Ajout de FluentValidation au conteneur de services.
+            // Enregistre tous les validateurs FluentValidation présents dans l’assembly courant.
             builder.Services.AddValidatorsFromAssemblyContaining<Program>();
 
-            // Construction et validation de DatabaseSettings, puis ajout au conteneur.
+            // Charge et valide la configuration DatabaseSettings depuis appsettings.json.
             if (TryBuildSettings<IDatabaseSettings, DatabaseSettings, DatabaseSettingsValidator>(builder, "DatabaseSettings", out DatabaseSettings dbSettings))
                 builder.Services.AddSingleton<IDatabaseSettings>(dbSettings);
             else
-                return;
+                return; // Si la configuration est invalide, l'application s'arrête.
 
-            // Construction et validation de JwtSettings, puis ajout au conteneur.
+            // Charge et valide la configuration JwtSettings depuis appsettings.json.
             if (TryBuildSettings<IJwtSettings, JwtSettings, JwtSettingsValidator>(builder, "JwtSettings", out JwtSettings jwtSettings))
                 builder.Services.AddSingleton<IJwtSettings>(jwtSettings);
             else
                 return;
 
-            // Ajout de la couche d'accès aux données (DAL) au conteneur.
+            // Injection de la couche d’accès aux données (DAL)
             builder.Services.AddDal(dbSettings);
 
-            // Ajout des services métier (BLL) au conteneur.
+            // Injection de la couche métier (BLL)
             builder.Services.AddBll();
 
-            // Ajout des contrôleurs au conteneur de services avec une politique d'autorisation globale.
-            // Cette configuration applique automatiquement l'attribut [Authorize] à tous les contrôleurs et actions,
-            // ce qui signifie que toutes les requêtes nécessitent un utilisateur authentifié par défaut.
-            // Les actions ou contrôleurs qui doivent rester accessibles sans authentification
-            // peuvent être annotés avec [AllowAnonymous].
-
+            // Configuration des contrôleurs avec une politique d’autorisation globale :
+            // toutes les actions nécessitent un utilisateur authentifié par défaut.
+            // Les endpoints publics doivent explicitement utiliser [AllowAnonymous].
             builder.Services.AddControllers(options =>
             {
                 var policy = new AuthorizationPolicyBuilder()
@@ -64,50 +61,46 @@ namespace DelicesDuJour_ApiRest
                 options.Filters.Add(new AuthorizeFilter(policy));
             });
 
-            // Configuration de l'authentification JWT.
-            // Cette section configure le middleware d'authentification pour utiliser le schéma "Bearer" avec JWT.
-            // Elle définit également les paramètres de validation du token, tels que l'émetteur, l'audience, la durée de vie
-            // et la clé de signature. Ces paramètres sont essentiels pour garantir que seuls les tokens valides et émis
-            // par une source de confiance sont acceptés.
-            //
-            // Le champ RoleClaimType est défini pour permettre l'utilisation de l'attribut [Authorize(Roles = "...")].
+            // Configuration du système d’authentification JWT.
             builder.Services.AddAuthentication(options =>
             {
-                // Définit le schéma par défaut pour l'authentification et les défis (401 Unauthorized).
+                // Schéma par défaut utilisé pour l’authentification et les erreurs 401.
                 options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
                 options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
             })
            .AddJwtBearer(options =>
            {
-               // Paramètres de validation du token JWT.
+               // Définit les règles de validation des tokens JWT.
                options.TokenValidationParameters = new TokenValidationParameters
                {
-                   ValidateIssuer = true, // Vérifie que le token provient de l'émetteur attendu.
-                   ValidateAudience = true, // Vérifie que le token est destiné à l'audience prévue.
-                   ValidateLifetime = true, // Vérifie que le token n'est pas expiré.
-                   ValidateIssuerSigningKey = true, // Vérifie que la signature du token est valide.
+                   ValidateIssuer = true, // Vérifie que le token provient du bon émetteur.
+                   ValidateAudience = true, // Vérifie que le token est destiné à la bonne audience.
+                   ValidateLifetime = true, // Vérifie la date d’expiration du token.
+                   ValidateIssuerSigningKey = true, // Vérifie la signature du token.
 
-                   ValidIssuer = jwtSettings.Issuer, // Émetteur attendu.
-                   ValidAudience = jwtSettings.Audience, // Audience attendue.
-                   IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings.Secret)), // Clé secrète utilisée pour signer le token.
+                   ValidIssuer = jwtSettings.Issuer,
+                   ValidAudience = jwtSettings.Audience,
+                   IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings.Secret)),
 
-                   RoleClaimType = ClaimTypes.Role // Permet d'utiliser les rôles dans les contrôleurs via [Authorize(Roles = "...")].
+                   // Permet d’utiliser [Authorize(Roles = "admin")] avec le claim "role".
+                   RoleClaimType = ClaimTypes.Role
                };
            });
-            // Configuration de Swagger/OpenAPI pour la documentation de l'API.
+
+            // Configuration de Swagger pour générer la documentation interactive de l’API.
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen(options =>
             {
-                // Affichage du titre et de la version dans Swagger UI
+                // Définition de la documentation de base.
                 options.SwaggerDoc("v1", new OpenApiInfo { Title = "Délices du jour", Version = "v1" });
 
-                // Inclure les commentaires XML (Le fichier XML doit être généré dans les propriétés du projet)
+                // Inclusion des commentaires XML des contrôleurs et modèles, si disponibles.
                 var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
                 var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
                 if (File.Exists(xmlPath))
                     options.IncludeXmlComments(xmlPath, true);
 
-                // Définition de la sécurité JWT dans Swagger
+                // Ajoute la définition du schéma de sécurité JWT dans Swagger.
                 options.AddSecurityDefinition("jwt", new OpenApiSecurityScheme
                 {
                     Name = "Authorization",
@@ -115,18 +108,18 @@ namespace DelicesDuJour_ApiRest
                     Scheme = "Bearer",
                     BearerFormat = "JWT",
                     In = ParameterLocation.Header,
-                    Description = "Entrez le token JWT.\n\nExemple : eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+                    Description = "Saisir le token JWT généré après connexion.\n\nExemple : Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
                 });
 
-                // Application de la sécurité globalement (toutes les opérations dans swagger)
-                options.AddSecurityRequirement(new Microsoft.OpenApi.Models.OpenApiSecurityRequirement
+                // Applique la sécurité JWT globalement dans l’interface Swagger.
+                options.AddSecurityRequirement(new OpenApiSecurityRequirement
                 {
                     {
-                        new Microsoft.OpenApi.Models.OpenApiSecurityScheme
+                        new OpenApiSecurityScheme
                         {
-                            Reference = new Microsoft.OpenApi.Models.OpenApiReference
+                            Reference = new OpenApiReference
                             {
-                                Type = Microsoft.OpenApi.Models.ReferenceType.SecurityScheme,
+                                Type = ReferenceType.SecurityScheme,
                                 Id = "jwt"
                             }
                         },
@@ -137,49 +130,50 @@ namespace DelicesDuJour_ApiRest
 
             var app = builder.Build();
 
-            // Middleware global de gestion des exceptions
+            // Middleware global pour intercepter et gérer les exceptions de l’API.
             app.UseMiddleware<GlobalExceptionMiddleware>();
-            // Configuration du pipeline HTTP
+
+            // En mode développement, active Swagger pour tester et documenter l’API.
             if (app.Environment.IsDevelopment())
             {
                 app.UseSwagger();
                 app.UseSwaggerUI();
             }
 
-            // Ajout de la sécurité
-            app.UseAuthentication(); // Toujours avant UseAuthorization
-            app.UseAuthorization();
+            // Ajout de la sécurité au pipeline HTTP.
+            app.UseAuthentication(); // Vérifie la validité du token JWT.
+            app.UseAuthorization();  // Vérifie les rôles et permissions.
 
-            // Permet d'accéder aux fichiers dans wwwroot pour les images de recettes
+            // Active l’accès aux fichiers statiques (par ex. : photos des recettes).
             app.UseStaticFiles();
 
-            // Mappage des contrôleurs
+            // Mappe les routes des contrôleurs.
             app.MapControllers();
 
-            // Démarrage de l'application
+            // Lance le serveur et l’application.
             app.Run();
         }
 
         /// <summary>
-        /// Tente de construire et de valider une section de configuration, puis retourne l'instance validée.
+        /// Tente de construire et de valider une configuration à partir d’une section appsettings.json.
         /// </summary>
-        /// <typeparam name="TService">Type de service à enregistrer.</typeparam>
-        /// <typeparam name="TImplementation">Type d'implémentation de la configuration.</typeparam>
-        /// <typeparam name="TValidator">Type du validateur FluentValidation.</typeparam>
-        /// <param name="builder">Le builder de l'application.</param>
-        /// <param name="sectionName">Nom de la section de configuration.</param>
-        /// <param name="settings">Instance validée de la configuration.</param>
+        /// <typeparam name="TService">Type d’interface de service.</typeparam>
+        /// <typeparam name="TImplementation">Type concret de la configuration.</typeparam>
+        /// <typeparam name="TValidator">Type du validateur FluentValidation à utiliser.</typeparam>
+        /// <param name="builder">Instance du WebApplicationBuilder.</param>
+        /// <param name="sectionName">Nom de la section de configuration à charger.</param>
+        /// <param name="settings">Instance de configuration validée en sortie.</param>
         /// <returns>True si la configuration est valide, sinon false.</returns>
         public static bool TryBuildSettings<TService, TImplementation, TValidator>(WebApplicationBuilder builder, string sectionName, out TImplementation settings)
             where TService : class
             where TImplementation : class, TService, new()
             where TValidator : AbstractValidator<TImplementation>, new()
         {
-            // Liaison de la configuration
+            // Lecture et liaison des paramètres depuis le fichier appsettings.json.
             settings = new TImplementation();
             builder.Configuration.GetSection(sectionName).Bind(settings);
 
-            // Création du logger via LoggerFactory
+            // Création d’un logger temporaire pour afficher les messages de démarrage.
             using var loggerFactory = LoggerFactory.Create(logging =>
             {
                 logging.AddConsole();
@@ -188,16 +182,17 @@ namespace DelicesDuJour_ApiRest
             });
             var logger = loggerFactory.CreateLogger("Startup");
 
-            // Validation avec FluentValidation
+            // Validation des paramètres via FluentValidation.
             var validator = new TValidator();
             var result = validator.Validate(settings);
 
             if (result.IsValid)
-                logger.LogInformation("Configuration '{SectionName}' chargée et validée.", sectionName);
-
+            {
+                logger.LogInformation("Configuration '{SectionName}' chargée et validée avec succès.", sectionName);
+            }
             else
             {
-                logger.LogError("Configuration invalide dans la section '{SectionName}'", sectionName);
+                logger.LogError("Configuration invalide dans la section '{SectionName}'.", sectionName);
                 foreach (var error in result.Errors)
                 {
                     logger.LogError(" - {Property}: {ErrorMessage}", error.PropertyName, error.ErrorMessage);
@@ -207,10 +202,5 @@ namespace DelicesDuJour_ApiRest
 
             return result.IsValid;
         }
-
     }
-
-
 }
-
-
