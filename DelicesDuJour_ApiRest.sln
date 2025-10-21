@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DelicesDuJour_ApiRest", "De
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestsUnitaires", "TestsUnitaires\TestsUnitaires.csproj", "{661F2369-BCF8-4CE4-9E0A-3F87D652DB5C}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestDIntegration", "TestDIntegration\TestDIntegration.csproj", "{B7065EF8-7D2B-477B-985B-632CC17148F2}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{661F2369-BCF8-4CE4-9E0A-3F87D652DB5C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{661F2369-BCF8-4CE4-9E0A-3F87D652DB5C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{661F2369-BCF8-4CE4-9E0A-3F87D652DB5C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B7065EF8-7D2B-477B-985B-632CC17148F2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B7065EF8-7D2B-477B-985B-632CC17148F2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B7065EF8-7D2B-477B-985B-632CC17148F2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B7065EF8-7D2B-477B-985B-632CC17148F2}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
