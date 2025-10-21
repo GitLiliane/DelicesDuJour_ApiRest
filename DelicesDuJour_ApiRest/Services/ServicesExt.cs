@@ -1,4 +1,5 @@
-﻿using System.Runtime.CompilerServices;
+﻿using DelicesDuJour_ApiRest.DataAccessLayer.Repositories.Utilisateurs;
+using System.Runtime.CompilerServices;
 
 namespace DelicesDuJour_ApiRest.Services
 {
@@ -21,6 +22,10 @@ namespace DelicesDuJour_ApiRest.Services
 
             // Enregistre le service de génération et de gestion des tokens JWT pour l’authentification.
             services.AddTransient<IJwtTokenService, JwtTokenService>();
+
+            services.AddTransient<IUtilisateurRepository, UtilisateurRepository>();
+            services.AddTransient<IAuthService, AuthService>();
+
         }
     }
 }

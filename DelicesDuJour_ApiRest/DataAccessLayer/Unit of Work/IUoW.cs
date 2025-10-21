@@ -3,6 +3,7 @@ using DelicesDuJour_ApiRest.DataAccessLayer.Repositories.Etapes;
 using DelicesDuJour_ApiRest.DataAccessLayer.Repositories.Ingredients;
 using DelicesDuJour_ApiRest.DataAccessLayer.Repositories.QuantiteIngred;
 using DelicesDuJour_ApiRest.DataAccessLayer.Repositories.Recettes;
+using DelicesDuJour_ApiRest.DataAccessLayer.Repositories.Utilisateurs;
 
 namespace DelicesDuJour_ApiRest.DataAccessLayer.Unit_of_Work
 {
@@ -38,6 +39,8 @@ namespace DelicesDuJour_ApiRest.DataAccessLayer.Unit_of_Work
         /// Accès au repository des relations quantité-ingrédient.
         /// </summary>
         IQuantiteIngredRepository QuantiteIngred { get; }
+
+        IUtilisateurRepository Utilisateurs { get; }
 
         #endregion Fin Repositories
 

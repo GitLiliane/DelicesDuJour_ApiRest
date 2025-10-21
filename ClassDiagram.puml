@@ -1,0 +1,390 @@
+@startuml DelicesDuJour_ClassDiagram
+
+' ==================== DOMAIN LAYER - Business Objects ====================
+package "Domain.BO" {
+    class Recette {
+        + int Id
+        + string nom
+        + TimeSpan temps_preparation
+        + TimeSpan temps_cuisson
+        + int difficulte
+        + List<Etape>? etapes
+        + List<Ingredient>? ingredients
+        + List<Categorie> categories
+        + string? photo
+    }
+
+    class Categorie {
+        + int id
+        + string nom
+    }
+
+    class Ingredient {
+        + int id
+        + string nom
+        + string quantite
+    }
+
+    class Etape {
+        + int id_recette
+        + int numero
+        + string titre
+        + string texte
+    }
+
+    class QuantiteIngredients {
+        + int id_ingredient
+        + int id_recette
+        + string quantite
+    }
+
+    class RecetteCategorieRelationship {
+        + int id_categorie
+        + int id_recette
+    }
+}
+
+' ==================== DOMAIN - Configuration ====================
+package "Domain.Configuration" {
+    interface IDatabaseSettings {
+        + string ConnectionString
+        + DatabaseProviderName? DatabaseProviderName
+    }
+
+    class DatabaseSettings {
+        + string ConnectionString
+        + DatabaseProviderName? DatabaseProviderName
+    }
+
+    enum DatabaseProviderName {
+        MariaDB
+        MySQL
+        SQLServer
+        PostgreSQL
+        Oracle
+    }
+
+    interface IJwtSettings {
+        + string Secret
+        + string Issuer
+        + string Audience
+        + int ExpirationMinutes
+    }
+
+    class JwtSettings {
+        + string Secret
+        + string Issuer
+        + string Audience
+        + int ExpirationMinutes
+    }
+}
+
+' ==================== DATA ACCESS LAYER - Repositories ====================
+package "DataAccessLayer.Repositories" {
+    interface "IGenericReadRepository<TKey, TEntity>" as IGenericRead {
+        + Task<IEnumerable<TEntity>> GetAllAsync()
+        + Task<TEntity> GetAsync(TKey key)
+    }
+
+    interface "IGenericWriteRepository<TKey, TEntity>" as IGenericWrite {
+        + Task<TEntity> CreateAsync(TEntity entity)
+        + Task<TEntity> ModifyAsync(TEntity entity)
+        + Task<bool> DeleteAsync(TKey key)
+    }
+
+    interface IRecetteRepository {
+        + Task<IEnumerable<RecetteCategorieRelationship>> GetAllRecetteCategorieRelationshipAsync()
+        + Task<bool> AddRecetteCategorieRelationshipAsync(int, int)
+        + Task<bool> RemoveRecetteCategorieRelationshipAsync(int, int)
+        + Task<IEnumerable<Recette>> GetRecettesByIdCategorieAsync(int)
+        + Task<bool> DeleteRecetteRelationsAsync(int)
+    }
+
+    class RecetteRepository {
+        - IDBSession _dbSession
+        - const RECETTE_TABLE
+        - const RECETTE_CATEGORIE_TABLE
+    }
+
+    interface ICategorieRepository {
+        + Task<IEnumerable<Categorie>> GetCategoriesByIdRecetteAsync(int)
+        + Task<bool> DeleteCategorieRelationsAsync(int)
+        + Task<bool> HasRecetteRelationsAsync(int)
+    }
+
+    class CategorieRepository {
+        - IDBSession _dbSession
+        - const CATEGORIE_TABLE
+        - const RECETTE_CATEGORIE_TABLE
+    }
+
+    interface IIngredientRepository {
+        + Task<IEnumerable<Ingredient>> GetIngredientsByIdRecetteAsync(int)
+    }
+
+    class IngredientRepository {
+        - IDBSession _dbSession
+        - const INGREDIENT_TABLE
+        - const RECETTE_INGREDIENT_TABLE
+    }
+
+    interface IEtapeRepository {
+        + Task<IEnumerable<Etape>> GetEtapesByIdRecetteAsync(int)
+        + Task<bool> DeleteEtapesRelationByIdRecetteAsync(int)
+    }
+
+    class EtapeRepository {
+        - IDBSession _dbSession
+        - const ETAPE_TABLE
+    }
+
+    interface IQuantiteIngredRepository {
+        + Task<IEnumerable<Recette>> GetRecettesByIdIngredientAsync(int)
+        + Task<IEnumerable<QuantiteIngredients>> GetIngredientsByIdRecetteAsync(int)
+        + Task<bool> DeleteRecetteRelationsIngredientAsync(int)
+        + Task<bool> DeleteIngredientRelationsRecetteAsync(int)
+    }
+
+    class QuantiteIngredRepository {
+        - IDBSession _dbSession
+        - const RECETTE_TABLE
+        - const INGREDIENT_TABLE
+        - const RECETTE_INGREDIENT_TABLE
+    }
+}
+
+' ==================== DATA ACCESS LAYER - Session ====================
+package "DataAccessLayer.Session" {
+    interface IDBSession {
+        + DatabaseProviderName? DatabaseProviderName
+        + IDbConnection Connection
+        + IDbTransaction Transaction
+        + bool HasActiveTransaction
+        + void BeginTransaction()
+        + void Commit()
+        + void Rollback()
+        + void Dispose()
+    }
+
+    abstract class BaseSession {
+        + DatabaseProviderName? DatabaseProviderName
+        + IDbConnection Connection
+        + IDbTransaction Transaction
+        + bool HasActiveTransaction
+        + void BeginTransaction()
+        + void Commit()
+        + void Rollback()
+        + void Dispose()
+        # void Dispose(bool disposing)
+    }
+
+    class MySQLDBSession {
+        + MySQLDBSession(IDatabaseSettings)
+    }
+
+    class MariaDBSession {
+        + MariaDBSession(IDatabaseSettings)
+    }
+
+    class PostGresDBSession {
+        + PostGresDBSession(IDatabaseSettings)
+    }
+}
+
+' ==================== DATA ACCESS LAYER - Unit of Work ====================
+package "DataAccessLayer.UnitOfWork" {
+    interface IUoW {
+        + IRecetteRepository Recettes
+        + IEtapeRepository Etapes
+        + ICategorieRepository Categories
+        + IIngredientRepository Ingredients
+        + IQuantiteIngredRepository QuantiteIngred
+        + bool HasActiveTransaction
+        + void BeginTransaction()
+        + void Commit()
+        + void Rollback()
+        + void Dispose()
+    }
+
+    class UoW {
+        - IDBSession _dbSession
+        - Lazy<IRecetteRepository> _recettes
+        - Lazy<IEtapeRepository> _etapes
+        - Lazy<ICategorieRepository> _categories
+        - Lazy<IIngredientRepository> _ingredients
+        - Lazy<IQuantiteIngredRepository> _quantiteIngred
+        + UoW(IDBSession, IServiceProvider)
+    }
+}
+
+' ==================== SERVICE LAYER ====================
+package "Services" {
+    interface IBiblioService {
+        ' Recettes
+        + Task<IEnumerable<Recette>> GetAllRecettesAsync()
+        + Task<Recette> GetRecetteByIdAsync(int)
+        + Task<Recette> AddRecetteAsync(Recette, IFormFile?)
+        + Task<Recette> ModifyRecetteAsync(Recette)
+        + Task<bool> DeleteRecetteAsync(int)
+        ' Etapes
+        + Task<IEnumerable<Etape>> GetAllEtapesAsync()
+        + Task<IEnumerable<Etape>> GetEtapesByIdRecetteAsync(int)
+        + Task<Etape> AddEtapeAsync(Etape)
+        + Task<Etape> ModifyEtapeAsync(Etape)
+        + Task<bool> DeleteEtapeAsync((int, int))
+        ' Categories
+        + Task<IEnumerable<Categorie>> GetAllCategoriesAsync()
+        + Task<Categorie> GetCategorieByIdAsync(int)
+        + Task<Categorie> AddCategorieAsync(Categorie)
+        + Task<Categorie> ModifyCategorieAsync(Categorie)
+        + Task<bool> DeleteCategorieAsync(int)
+        ' Relations Recettes-Categories
+        + Task<IEnumerable<RecetteCategorieRelationship>> GetAllRecettesCategoriesAsync()
+        + Task<bool> AddRecetteCategorieRelationshipAsync(int, int)
+        + Task<bool> RemoveRecetteCategorieRelationshipAsync(int, int)
+        + Task<IEnumerable<Recette>> GetRecettesByIdCategorieAsync(int)
+        + Task<IEnumerable<Categorie>> GetCategoriesByIdRecetteAsync(int)
+        ' Ingredients
+        + Task<IEnumerable<Ingredient>> GetAllIngredientsAsync()
+        + Task<Ingredient> GetIngredientByIdAsync(int)
+        + Task<Ingredient> AddIngredientAsync(Ingredient)
+        + Task<Ingredient> ModifyIngredientAsync(Ingredient)
+        + Task<bool> DeleteIngredientAsync(int)
+        ' Relations Recettes-Ingredients
+        + Task<IEnumerable<QuantiteIngredients>> GetQuantiteIngredientsAsync()
+        + Task<QuantiteIngredients> GetQuantiteIngredientsByIdAsync((int, int))
+        + Task<QuantiteIngredients> AddRecetteIngredientRelationshipAsync(QuantiteIngredients)
+        + Task<QuantiteIngredients> updateRecetteIngredientRelationshipAsync(QuantiteIngredients)
+        + Task<bool> RemoveRecetteIngredientRelationshipAsync((int, int))
+    }
+
+    class BiblioService {
+        - IUoW _UoW
+        + BiblioService(IUoW)
+    }
+
+    interface IJwtTokenService {
+        + string GenerateToken(string username, string[] roles)
+    }
+
+    class JwtTokenService {
+        - IJwtSettings _jwtSettings
+        + JwtTokenService(IJwtSettings)
+    }
+}
+
+' ==================== CONTROLLER LAYER ====================
+package "Controllers" {
+    class RecettesController <<ControllerBase>> {
+        - IBiblioService _biblioservice
+        + GetRecettes()
+        + GetRecetteById(int)
+        + CreateRecette(IValidator, string?, IFormFile?)
+        + UpdateRecette(IValidator, int, string?, IFormFile?)
+        + DeleteRecette(int)
+    }
+
+    class CategoriesController <<ControllerBase>> {
+        - IBiblioService _biblioService
+        + GetCategories()
+        + GetCategorieById(int)
+        + CreateCategorie(IValidator, CreateCategorieDTO)
+        + UpdateCategorie(IValidator, int, UpdateCategorieDTO)
+        + DeleteCategorie(int)
+    }
+
+    class IngredientsController <<ControllerBase>> {
+        - IBiblioService _biblioService
+    }
+
+    class EtapesController <<ControllerBase>> {
+        - IBiblioService _biblioService
+    }
+
+    class QuantiteIngredientsController <<ControllerBase>> {
+        - IBiblioService _biblioService
+    }
+
+    class RecettesCategoriesRelationsController <<ControllerBase>> {
+        - IBiblioService _biblioService
+    }
+
+    class AuthenticationController <<ControllerBase>> {
+        - IJwtTokenService _jwtTokenService
+    }
+}
+
+' ==================== RELATIONS ====================
+
+' Domain Relations
+Recette "1" *-- "0..*" Etape
+Recette "1..*" -- "0..*" Categorie
+Recette "1" -- "1..*" Ingredient
+(Recette, Categorie) .. RecetteCategorieRelationship
+(Recette, Ingredient) .. QuantiteIngredients
+
+' Configuration
+DatabaseSettings ..|> IDatabaseSettings
+JwtSettings ..|> IJwtSettings
+DatabaseSettings --> DatabaseProviderName
+
+' Repository Inheritance
+IRecetteRepository --|> IGenericRead
+IRecetteRepository --|> IGenericWrite
+RecetteRepository ..|> IRecetteRepository
+
+ICategorieRepository --|> IGenericRead
+ICategorieRepository --|> IGenericWrite
+CategorieRepository ..|> ICategorieRepository
+
+IIngredientRepository --|> IGenericRead
+IIngredientRepository --|> IGenericWrite
+IngredientRepository ..|> IIngredientRepository
+
+IEtapeRepository --|> IGenericRead
+IEtapeRepository --|> IGenericWrite
+EtapeRepository ..|> IEtapeRepository
+
+IQuantiteIngredRepository --|> IGenericRead
+IQuantiteIngredRepository --|> IGenericWrite
+QuantiteIngredRepository ..|> IQuantiteIngredRepository
+
+' Repository Dependencies
+RecetteRepository --> IDBSession
+CategorieRepository --> IDBSession
+IngredientRepository --> IDBSession
+EtapeRepository --> IDBSession
+QuantiteIngredRepository --> IDBSession
+
+' Session Relations
+BaseSession ..|> IDBSession
+MySQLDBSession --|> BaseSession
+MariaDBSession --|> BaseSession
+PostGresDBSession --|> BaseSession
+BaseSession --> IDatabaseSettings
+
+' Unit of Work Relations
+UoW ..|> IUoW
+UoW *-- IDBSession
+UoW o-- IRecetteRepository
+UoW o-- ICategorieRepository
+UoW o-- IIngredientRepository
+UoW o-- IEtapeRepository
+UoW o-- IQuantiteIngredRepository
+
+' Service Relations
+BiblioService ..|> IBiblioService
+BiblioService --> IUoW
+JwtTokenService ..|> IJwtTokenService
+JwtTokenService --> IJwtSettings
+
+' Controller Relations
+RecettesController --> IBiblioService
+CategoriesController --> IBiblioService
+IngredientsController --> IBiblioService
+EtapesController --> IBiblioService
+QuantiteIngredientsController --> IBiblioService
+RecettesCategoriesRelationsController --> IBiblioService
+AuthenticationController --> IJwtTokenService
+
+@enduml

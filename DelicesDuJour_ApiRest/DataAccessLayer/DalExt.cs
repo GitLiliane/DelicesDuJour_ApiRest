@@ -3,6 +3,7 @@ using DelicesDuJour_ApiRest.DataAccessLayer.Repositories.Etapes;
 using DelicesDuJour_ApiRest.DataAccessLayer.Repositories.Ingredients;
 using DelicesDuJour_ApiRest.DataAccessLayer.Repositories.QuantiteIngred;
 using DelicesDuJour_ApiRest.DataAccessLayer.Repositories.Recettes;
+using DelicesDuJour_ApiRest.DataAccessLayer.Repositories.Utilisateurs;
 using DelicesDuJour_ApiRest.DataAccessLayer.Session;
 using DelicesDuJour_ApiRest.DataAccessLayer.Session.MariaDB;
 using DelicesDuJour_ApiRest.DataAccessLayer.Session.MySQL;
@@ -48,6 +49,7 @@ namespace DelicesDuJour_ApiRest.DataAccessLayer
             services.AddTransient<ICategorieRepository, CategorieRepository>();
             services.AddTransient<IIngredientRepository, IngredientRepository>();
             services.AddTransient<IQuantiteIngredRepository, QuantiteIngredRepository>();
+            services.AddTransient<IUtilisateurRepository, UtilisateurRepository>();
         }
     }
 }

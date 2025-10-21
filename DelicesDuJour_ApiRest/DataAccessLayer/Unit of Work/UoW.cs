@@ -3,6 +3,7 @@ using DelicesDuJour_ApiRest.DataAccessLayer.Repositories.Etapes;
 using DelicesDuJour_ApiRest.DataAccessLayer.Repositories.Ingredients;
 using DelicesDuJour_ApiRest.DataAccessLayer.Repositories.QuantiteIngred;
 using DelicesDuJour_ApiRest.DataAccessLayer.Repositories.Recettes;
+using DelicesDuJour_ApiRest.DataAccessLayer.Repositories.Utilisateurs;
 using DelicesDuJour_ApiRest.DataAccessLayer.Session;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -20,6 +21,7 @@ namespace DelicesDuJour_ApiRest.DataAccessLayer.Unit_of_Work
         private readonly Lazy<ICategorieRepository> _categories;
         private readonly Lazy<IIngredientRepository> _ingredients;
         private readonly Lazy<IQuantiteIngredRepository> _quantiteIngred;
+        private readonly Lazy<IUtilisateurRepository> _utilisateur;
 
         public UoW(IDBSession dbSession, IServiceProvider serviceProvider)
         {
@@ -29,6 +31,7 @@ namespace DelicesDuJour_ApiRest.DataAccessLayer.Unit_of_Work
             _categories = new Lazy<ICategorieRepository>(() => serviceProvider.GetRequiredService<ICategorieRepository>());
             _ingredients = new Lazy<IIngredientRepository>(() => serviceProvider.GetRequiredService<IIngredientRepository>());
             _quantiteIngred = new Lazy<IQuantiteIngredRepository>(() => serviceProvider.GetRequiredService<IQuantiteIngredRepository>());
+            _utilisateur = new Lazy<IUtilisateurRepository>(() => serviceProvider.GetRequiredService<IUtilisateurRepository>());
         }
 
         #region Repositories
@@ -57,6 +60,8 @@ namespace DelicesDuJour_ApiRest.DataAccessLayer.Unit_of_Work
         /// Repository des relations quantité-ingrédient.
         /// </summary>
         public IQuantiteIngredRepository QuantiteIngred => _quantiteIngred.Value;
+
+        public IUtilisateurRepository Utilisateurs => _utilisateur.Value;
 
         #endregion Fin Repositories
 

@@ -6,8 +6,8 @@ using System.Threading.Tasks;
 
 namespace TestDIntegration.Fixtures
 {
-    public class AbstractIntegrationTest : IClassFixture
-    {
+    //public class AbstractIntegrationTest : IClassFixture
+    //{
 
-    }
+    //}
 }
