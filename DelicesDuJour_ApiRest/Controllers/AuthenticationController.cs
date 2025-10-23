@@ -39,30 +39,23 @@ namespace DelicesDuJour_ApiRest.Controllers
                 return Unauthorized(new { message = "Nom d'utilisateur ou mot de passe incorrect." });
             }
 
-            // Vérifie le mot de passe avec BCrypt
-            bool motDePasseValide = BCrypt.Net.BCrypt.Verify(request.Password, utilisateur.pass_word);
-
-            if (!motDePasseValide)
-            {
-                // Mot de passe incorrect → réponse HTTP 401
-                return Unauthorized(new { message = "Nom d'utilisateur ou mot de passe incorrect." });
-            }
 
             // Si tout est bon → on génère le token
             string nomUtilisateur;
-
-            if (utilisateur.identifiant != null)
-            {
-                nomUtilisateur = utilisateur.identifiant;
-            }
-            else
-            {
+            if (utilisateur.identifiant == null)
                 nomUtilisateur = request.Username;
-            }
+            else
+                nomUtilisateur = utilisateur.identifiant;
 
-            string[] roles = new string[] { utilisateur.role.nom };
+            // Récupère le rôle tel qu'il est stocké en base (on suppose maintenant qu'il est déjà 'Administrateur' ou 'Utilisateur')
+            string roleFromDb;
+            if (utilisateur.role == null || utilisateur.role.nom == null)
+                roleFromDb = "";
+            else
+                roleFromDb = utilisateur.role.nom;
 
-            string token = _jwtTokenService.GenerateToken(nomUtilisateur, roles);
+            // Génère le token en passant le rôle tel quel
+            string token = _jwtTokenService.GenerateToken(nomUtilisateur, roleFromDb);
 
             // Retourne le token
             return Ok(new JwtDTO { Token = token });

@@ -54,9 +54,6 @@ namespace DelicesDuJour_ApiRest.Services
             // Récupération des étapes associées
             var listEtapes = await _UoW.Etapes.GetEtapesByIdRecetteAsync(id);
 
-            // Récupération des quantités d'ingrédients
-            var listQuantiteIngredients = await _UoW.QuantiteIngred.GetIngredientsByIdRecetteAsync(id);
-
             // Récupération des ingrédients détaillés
             var listIngredients = await _UoW.Ingredients.GetIngredientsByIdRecetteAsync(id);
 

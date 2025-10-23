@@ -1,16 +1,17 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using DelicesDuJour_ApiRest.DataAccessLayer.Repositories.Categories;
 using DelicesDuJour_ApiRest.DataAccessLayer.Repositories.Etapes;
 using DelicesDuJour_ApiRest.DataAccessLayer.Repositories.Ingredients;
 using DelicesDuJour_ApiRest.DataAccessLayer.Repositories.QuantiteIngred;
 using DelicesDuJour_ApiRest.DataAccessLayer.Repositories.Recettes;
+using DelicesDuJour_ApiRest.DataAccessLayer.Repositories.Utilisateurs;
 using DelicesDuJour_ApiRest.DataAccessLayer.Unit_of_Work;
 using DelicesDuJour_ApiRest.Domain.BO;
 using DelicesDuJour_ApiRest.Services;
 using Microsoft.AspNetCore.Http;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 using Xunit;
 
 namespace DelicesDuJour_ApiRest.Tests.Services;
@@ -684,6 +685,7 @@ public class BiblioServiceTest
         private readonly FakeCategoriesRepository _categories;
         private readonly FakeIngredientsRepository _ingredients;
         private readonly FakeQuantiteIngredientsRepository _quantiteIngred;
+        private readonly FakeUtilisateursRepository _utilisateurs;
 
         public FakeUoW(
             IEnumerable<Recette> getAllRecettesResult = null,
@@ -762,6 +764,8 @@ public class BiblioServiceTest
                 createQuantiteIngredientResult,
                 getIngredientsByIdRecetteQuantiteResult,
                 deleteRecetteRelationsIngredientResult);
+
+            _utilisateurs = new FakeUtilisateursRepository();
         }
 
         public IRecetteRepository Recettes => _recettes;
@@ -769,6 +773,7 @@ public class BiblioServiceTest
         public ICategorieRepository Categories => _categories;
         public IIngredientRepository Ingredients => _ingredients;
         public IQuantiteIngredRepository QuantiteIngred => _quantiteIngred;
+        public IUtilisateurRepository Utilisateurs => _utilisateurs;
         public bool HasActiveTransaction { get; } 
 
         public void BeginTransaction() { }
@@ -861,6 +866,13 @@ public class BiblioServiceTest
         public Task<bool> DeleteEtapesRelationByIdRecetteAsync(int idRecette) => Task.FromResult(_deleteRelationResult ?? true);
     }
 
+    private class FakeUtilisateursRepository : IUtilisateurRepository
+    {
+        public Task<Utilisateur?> GetByUsernameAsync(string username)
+        {
+            throw new NotImplementedException();
+        }
+    }
     private class FakeCategoriesRepository : ICategorieRepository
     {
         private readonly IEnumerable<Categorie> _getAllResult;

@@ -51,6 +51,7 @@ namespace DelicesDuJour_ApiRest.Controllers
                 temps_preparation = r.temps_preparation,
                 temps_cuisson = r.temps_cuisson,
                 difficulte = r.difficulte,
+                photo = r.photo
             });
 
             // Retourne la liste de recettes avec un code HTTP 200
@@ -76,27 +77,49 @@ namespace DelicesDuJour_ApiRest.Controllers
                 return NotFound();
 
             // Conversion des ingrédients en DTO
-            var ingredientDTOs = recette.ingredients.Select(ingredient => new IngredientDTO
+            List<IngredientDTO> ingredientDTOs = new();
+
+            foreach (Ingredient ingredient in recette.ingredients)
             {
-                id = ingredient.id,
-                nom = ingredient.nom,
-                quantite = ingredient.quantite
-            }).ToList();
+                IngredientDTO ingredientDTO = new()
+                {
+                    id = ingredient.id,
+                    nom = ingredient.nom,
+                    quantite = ingredient.quantite
+                };
+
+                ingredientDTOs.Add(ingredientDTO);
+            }
 
             // Conversion des étapes en DTO
-            var etapeDTOs = recette.etapes.Select(etape => new EtapeDTO
+            List<EtapeDTO> etapeDTOs = new();
+
+            foreach (Etape etape in recette.etapes)
             {
-                numero = etape.numero,
-                titre = etape.titre,
-                texte = etape.texte
-            }).ToList();
+                EtapeDTO etapeDTO = new()
+                {
+                    numero = etape.numero,
+                    titre = etape.titre,
+                    texte = etape.texte
+                };
+
+                etapeDTOs.Add(etapeDTO);
+            }
+
 
             // Conversion des catégories en DTO
-            var categorieDTOs = recette.categories.Select(categorie => new CategorieDTO
+            List<CategorieDTO> categorieDTOs = new();
+
+            foreach (Categorie categorie in recette.categories)
             {
-                id = categorie.id,
-                nom = categorie.nom
-            }).ToList();
+                CategorieDTO categorieDTO = new()
+                {
+                    id = categorie.id,
+                    nom = categorie.nom
+                };
+
+                categorieDTOs.Add(categorieDTO);
+            }
 
             // Construction d'une URL absolue pour la photo
             string? fullPhotoUrl = null;

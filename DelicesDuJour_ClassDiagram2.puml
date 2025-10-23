@@ -1,0 +1,344 @@
+@startuml DelicesDuJour_ClassDiagram
+
+' ===== CONFIGURATION DU STYLE =====
+!define DOMAIN_COLOR #E8F4F8
+!define CONTROLLER_COLOR #FFE4B5
+!define SERVICE_COLOR #D4F1D4
+!define REPOSITORY_COLOR #F5E6FF
+!define SESSION_COLOR #FFE6E6
+!define CONFIG_COLOR #FFF9E6
+
+skinparam backgroundColor #FFFFFF
+skinparam shadowing false
+skinparam roundcorner 10
+skinparam packageStyle rectangle
+skinparam nodesep 50
+skinparam ranksep 50
+
+skinparam class {
+    BackgroundColor White
+    BorderColor Black
+    BorderThickness 1.5
+    ArrowColor #333333
+    ArrowThickness 1.5
+    FontSize 10
+}
+
+skinparam package {
+    BorderColor #666666
+    BorderThickness 2
+    FontStyle bold
+    FontSize 11
+}
+
+' ===== COLONNE 1 : CONTROLLERS =====
+package "Controllers" CONTROLLER_COLOR {
+    class RecettesController {
+        -_biblioservice
+        +GetRecettes()
+        +GetRecetteById()
+        +CreateRecette()
+        +UpdateRecette()
+        +DeleteRecette()
+    }
+
+    class CategoriesController {
+        -_biblioservice
+        +GetCategories()
+        +CreateCategorie()
+    }
+
+    class IngredientsController {
+        -_biblioservice
+    }
+
+    class EtapesController {
+        -_biblioservice
+    }
+
+    class AuthenticationController {
+        -_authService
+        -_jwtService
+        +Login()
+    }
+}
+
+' ===== COLONNE 2 : DOMAIN =====
+package "Domain.BO" DOMAIN_COLOR {
+    class Recette {
+        +Id : int
+        +nom : string
+        +temps_preparation
+        +temps_cuisson
+        +difficulte : int
+        +photo : string
+    }
+
+    class Categorie {
+        +id : int
+        +nom : string
+    }
+
+    class Ingredient {
+        +id : int
+        +nom : string
+        +quantite : string
+    }
+
+    class Etape {
+        +id_recette : int
+        +numero : int
+        +titre : string
+    }
+
+    class Utilisateur {
+        +id : int
+        +identifiant : string
+        +role : Role
+        +role_id : int
+    }
+
+    class Role {
+        +id : int
+        +nom : string
+    }
+
+    class QuantiteIngredients {
+        +id_ingredient : int
+        +id_recette : int
+        +quantite : string
+    }
+
+    class RecetteCategorieRelationship {
+        +id_categorie : int
+        +id_recette : int
+    }
+}
+
+' ===== COLONNE 3 : SERVICES =====
+package "Services" SERVICE_COLOR {
+    interface IBiblioService {
+        +GetAllRecettesAsync()
+        +GetRecetteByIdAsync()
+        +AddRecetteAsync()
+        +ModifyRecetteAsync()
+        +DeleteRecetteAsync()
+        ..
+        +GetAllEtapesAsync()
+        +GetAllCategoriesAsync()
+        +GetAllIngredientsAsync()
+    }
+
+    class BiblioService {
+        -_UoW : IUoW
+    }
+
+    interface IAuthService {
+        +AuthenticateAsync()
+    }
+
+    class AuthService {
+        -_userRepo
+    }
+
+    interface IJwtTokenService {
+        +GenerateToken()
+    }
+
+    class JwtTokenService {
+        -_jwtSettings
+    }
+}
+
+' Placement forcé côte à côte
+RecettesController -[hidden]right- Recette
+BiblioService -[hidden]right- RecettesController
+
+' ===== COLONNE 4 : CONFIGURATION =====
+package "Config" CONFIG_COLOR {
+    interface IDatabaseSettings {
+        +ConnectionString
+        +DatabaseProviderName
+    }
+
+    class DatabaseSettings
+
+    interface IJwtSettings {
+        +Secret
+        +Issuer
+        +Audience
+        +ExpirationMinutes
+    }
+
+    class JwtSettings
+
+    class GlobalExceptionMiddleware {
+        +InvokeAsync()
+    }
+}
+
+' ===== COLONNE 5 : REPOSITORIES =====
+package "Repositories" REPOSITORY_COLOR {
+    interface "IGenericRead<T>" as IRead {
+        +GetAllAsync()
+        +GetAsync()
+    }
+
+    interface "IGenericWrite<T>" as IWrite {
+        +CreateAsync()
+        +ModifyAsync()
+        +DeleteAsync()
+    }
+
+    interface IRecetteRepository
+    interface ICategorieRepository
+    interface IIngredientRepository
+    interface IEtapeRepository
+    interface IUtilisateurRepository
+    interface IQuantiteIngredRepository
+
+    class RecetteRepository
+    class CategorieRepository
+    class IngredientRepository
+    class EtapeRepository
+    class UtilisateurRepository
+    class QuantiteIngredRepository
+}
+
+' ===== COLONNE 6 : DATA ACCESS =====
+package "DataAccess" SESSION_COLOR {
+    interface IDBSession {
+        +Connection
+        +Transaction
+        +BeginTransaction()
+        +Commit()
+        +Rollback()
+    }
+
+    abstract class BaseSession
+
+    class MySQLDBSession
+    class MariaDBSession
+    class PostGresDBSession
+
+    interface IUoW {
+        +Recettes
+        +Categories
+        +Ingredients
+        +Etapes
+        +Utilisateurs
+        +BeginTransaction()
+        +Commit()
+    }
+
+    class UoW {
+        -_dbSession
+    }
+}
+
+' Placement horizontal forcé
+IDatabaseSettings -[hidden]right- IRead
+IRead -[hidden]right- IDBSession
+
+' ========== RELATIONS DOMAIN (multiplicité) ==========
+Recette "1" o-- "0..*" Etape
+Recette "0..*" -- "0..*" Ingredient
+Recette "0..*" -- "0..*" Categorie
+Recette "1" -- "0..*" QuantiteIngredients
+Ingredient "1" -- "0..*" QuantiteIngredients
+Recette "1" -- "0..*" RecetteCategorieRelationship
+Categorie "1" -- "0..*" RecetteCategorieRelationship
+Utilisateur "0..*" -- "1" Role
+
+' ========== RELATIONS CONFIGURATION ==========
+DatabaseSettings ..|> IDatabaseSettings
+JwtSettings ..|> IJwtSettings
+
+' ========== RELATIONS CONTROLLERS ==========
+RecettesController --> IBiblioService
+CategoriesController --> IBiblioService
+IngredientsController --> IBiblioService
+EtapesController --> IBiblioService
+AuthenticationController --> IAuthService
+AuthenticationController --> IJwtTokenService
+
+' ========== RELATIONS SERVICES ==========
+BiblioService ..|> IBiblioService
+AuthService ..|> IAuthService
+JwtTokenService ..|> IJwtTokenService
+
+BiblioService --> IUoW
+BiblioService ..> Recette
+BiblioService ..> Categorie
+BiblioService ..> Ingredient
+BiblioService ..> Etape
+
+AuthService --> IUtilisateurRepository
+AuthService ..> Utilisateur
+
+JwtTokenService --> IJwtSettings
+
+' ========== RELATIONS REPOSITORIES ==========
+IRecetteRepository --|> IRead
+IRecetteRepository --|> IWrite
+ICategorieRepository --|> IRead
+ICategorieRepository --|> IWrite
+IIngredientRepository --|> IRead
+IIngredientRepository --|> IWrite
+IEtapeRepository --|> IRead
+IEtapeRepository --|> IWrite
+IUtilisateurRepository --|> IRead
+IUtilisateurRepository --|> IWrite
+IQuantiteIngredRepository --|> IRead
+IQuantiteIngredRepository --|> IWrite
+
+RecetteRepository ..|> IRecetteRepository
+CategorieRepository ..|> ICategorieRepository
+IngredientRepository ..|> IIngredientRepository
+EtapeRepository ..|> IEtapeRepository
+UtilisateurRepository ..|> IUtilisateurRepository
+QuantiteIngredRepository ..|> IQuantiteIngredRepository
+
+RecetteRepository --> IDBSession
+CategorieRepository --> IDBSession
+IngredientRepository --> IDBSession
+EtapeRepository --> IDBSession
+UtilisateurRepository --> IDBSession
+QuantiteIngredRepository --> IDBSession
+
+RecetteRepository ..> Recette
+CategorieRepository ..> Categorie
+IngredientRepository ..> Ingredient
+EtapeRepository ..> Etape
+UtilisateurRepository ..> Utilisateur
+
+' ========== RELATIONS SESSION & UOW ==========
+BaseSession ..|> IDBSession
+MySQLDBSession --|> BaseSession
+MariaDBSession --|> BaseSession
+PostGresDBSession --|> BaseSession
+
+BaseSession --> IDatabaseSettings
+
+UoW ..|> IUoW
+UoW --> IDBSession
+UoW "1" *-- "1" IRecetteRepository
+UoW "1" *-- "1" ICategorieRepository
+UoW "1" *-- "1" IIngredientRepository
+UoW "1" *-- "1" IEtapeRepository
+UoW "1" *-- "1" IUtilisateurRepository
+UoW "1" *-- "1" IQuantiteIngredRepository
+
+' ===== LÉGENDE =====
+legend bottom center
+  <size:13><b>Architecture DelicesDuJour - Diagramme de Classes</b></size>
+  |<DOMAIN_COLOR>      | **Domain** | Entités métier |
+  |<CONTROLLER_COLOR>  | **Controllers** | API REST endpoints |
+  |<SERVICE_COLOR>     | **Services** | Logique métier |
+  |<REPOSITORY_COLOR>  | **Repositories** | Accès données |
+  |<SESSION_COLOR>     | **DataAccess** | Gestion BDD |
+  |<CONFIG_COLOR>      | **Config** | Configuration |
+  **Relations :** --|> Héritage  · ..|> Implémentation  · --> Dépendance  · o-- Composition  · *-- Agrégation
+endlegend
+
+@enduml
