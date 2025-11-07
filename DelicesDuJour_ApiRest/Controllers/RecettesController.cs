@@ -6,6 +6,7 @@ using FluentValidation;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Immutable;
+using System.Security.Permissions;
 using System.Text.Json;
 
 namespace DelicesDuJour_ApiRest.Controllers
@@ -325,7 +326,8 @@ namespace DelicesDuJour_ApiRest.Controllers
         [HttpPut("{id}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> UpdateRecette(IValidator<UpdateRecetteDTO> validator, [FromRoute] int id, [FromForm] string? request, IFormFile? photoFile)
+        
+        public async Task<IActionResult> UpdateRecette(IValidator<UpdateRecetteDTO> validator, [FromRoute] int id, [FromForm] string? request,[FromForm] IFormFile? photoFile)
         {
             UpdateRecetteDTO updateRecetteDTO;
 
