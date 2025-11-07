@@ -7,11 +7,9 @@ name: Docker
 
 on:
   push:
-    branches: [ "release" ]
     # Publish semver tags as releases.
     tags: [ 'v*.*.*' ]
-  pull_request:
-    branches: [ "release" ]
+
 
 env:
   # Use docker.io for Docker Hub if empty
@@ -79,7 +77,7 @@ jobs:
           labels: ${{ steps.meta.outputs.labels }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
-          file: ./DelicesDuJour_ApiRest/dockerfile
+          file: ./DelicesDuJour_ApiRest/Dockerfile
 
       # Sign the resulting Docker image digest except on PRs.
       # This will only write to the public Rekor transparency log when the Docker
