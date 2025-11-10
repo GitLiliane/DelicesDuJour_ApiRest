@@ -35,9 +35,9 @@ namespace TestDIntegration
                 temps_preparation = TimeSpan.FromMinutes(35),
                 temps_cuisson = TimeSpan.FromMinutes(130),
                 difficulte = 2,
-                etapes = new List<DelicesDuJour_ApiRest.Domain.DTO.DTOIn.UpdateEtapeDTO>
+                etapes = new List<UpdateEtapeDTO>
                 {
-                    new DelicesDuJour_ApiRest.Domain.DTO.DTOIn.UpdateEtapeDTO
+                    new UpdateEtapeDTO
                     {
                         id_recette = recetteId,
                         numero = 1,
@@ -45,13 +45,13 @@ namespace TestDIntegration
                         texte = "Laisser mijoter 10 minutes de plus."
                     }
                 },
-                ingredients = new List<DelicesDuJour_ApiRest.Domain.DTO.DTOOut.IngredientDTO>
+                ingredients = new List<IngredientDTO>
                 {
-                    new DelicesDuJour_ApiRest.Domain.DTO.DTOOut.IngredientDTO { id = 1, nom = "Sel", quantite = "2 pincées" }
+                    new IngredientDTO { id = 1, nom = "Sel", quantite = "2 pincées" }
                 },
-                categories = new List<DelicesDuJour_ApiRest.Domain.DTO.DTOOut.CategorieDTO>
+                categories = new List<CategorieDTO>
                 {
-                    new DelicesDuJour_ApiRest.Domain.DTO.DTOOut.CategorieDTO { id = 1, nom = "Plat" }
+                    new CategorieDTO { id = 1, nom = "Plat" }
                 },
                 photo = null
             };
@@ -62,7 +62,7 @@ namespace TestDIntegration
             // Assert - réponse du PUT
             Assert.Equal(HttpStatusCode.OK, putResponse.StatusCode);
 
-            var returned = await putResponse.Content.ReadFromJsonAsync<RecetteDTO>();
+            var returned = await putResponse.Content.ReadFromJsonAsync<RecetteDTO>();            
             Assert.NotNull(returned);
             Assert.Equal(recetteId, returned.Id);
             Assert.Equal(updateDto.nom, returned.nom);
@@ -70,7 +70,7 @@ namespace TestDIntegration
             Assert.Equal(updateDto.etapes.Count, returned.etapes.Count);
             Assert.Equal(updateDto.ingredients.Count, returned.ingredients.Count);
             Assert.Equal(updateDto.categories.Count, returned.categories.Count);
-
+            
             // Vérifier la persistance via GET
             var getResponse = await httpClient.GetAsync($"api/recettes/{recetteId}");
             Assert.Equal(HttpStatusCode.OK, getResponse.StatusCode);
