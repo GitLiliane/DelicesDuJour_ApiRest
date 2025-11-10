@@ -88,7 +88,7 @@ namespace DelicesDuJour_ApiRest.Domain
                 // Retourne la réponse JSON
                 return context.Response.WriteAsJsonAsync(response);
             }
-            // Gestion des exceptions d'accès non autorisé
+            // Gestion des exceptions d'accès non autorisé I/O
             else if (exception is UnauthorizedAccessException)
             {
                 context.Response.StatusCode = StatusCodes.Status401Unauthorized;

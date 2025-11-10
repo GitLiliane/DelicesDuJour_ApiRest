@@ -159,7 +159,7 @@ namespace DelicesDuJour_ApiRest.Controllers
         [HttpPost()]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> CreateRecette(IValidator<CreateRecetteDTO> validator, [FromForm] string? request, IFormFile? photoFile)
+        public async Task<IActionResult> CreateRecette(IValidator<CreateRecetteDTO> validator, [FromForm] string? request, [FromForm] IFormFile? photoFile)
         {
             CreateRecetteDTO dto;
 
