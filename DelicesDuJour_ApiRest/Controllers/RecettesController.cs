@@ -107,7 +107,6 @@ namespace DelicesDuJour_ApiRest.Controllers
                 etapeDTOs.Add(etapeDTO);
             }
 
-
             // Conversion des catégories en DTO
             List<CategorieDTO> categorieDTOs = new();
 

@@ -5,7 +5,6 @@ using System.Net.Http.Json;
 using DelicesDuJour_ApiRest.Domain.DTO.DTOIn;
 using DelicesDuJour_ApiRest.Domain.DTO.DTOOut;
 using TestDIntegration.Fixtures;
-using Xunit;
 
 namespace TestDIntegration
 {
