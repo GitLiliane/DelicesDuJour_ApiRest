@@ -37,7 +37,7 @@ namespace DelicesDuJour_ApiRest.Controllers
         /// Accessible uniquement par les administrateurs.
         /// </summary>
         /// <returns>Liste de catégories au format DTO.</returns>
-        [Authorize(Roles = "Administrateur")] // Seul l'administrateur peut accéder à cette action
+        [AllowAnonymous] // Seul l'administrateur peut accéder à cette action
         [HttpGet()] // Route GET : api/Categories
         [ProducesResponseType(StatusCodes.Status200OK)] // Indique que l'action retourne un code 200 en cas de succès
         public async Task<IActionResult> GetCategories()
@@ -62,7 +62,7 @@ namespace DelicesDuJour_ApiRest.Controllers
         /// </summary>
         /// <param name="id">Identifiant de la catégorie à récupérer.</param>
         /// <returns>La catégorie correspondante au format DTO ou 404 si non trouvée.</returns>
-        [Authorize(Roles = "Administrateur, Utilisateur")] // Rôle Administrateur ou Utilisateur
+        [AllowAnonymous] // Rôle Administrateur ou Utilisateur
         [HttpGet("{id}")] // Route GET : api/Categories/{id}
         [ProducesResponseType(StatusCodes.Status200OK)] // Code 200 si trouvé
         [ProducesResponseType(StatusCodes.Status404NotFound)] // Code 404 si non trouvé
